@@ -1,18 +1,14 @@
 export class Controller { // abstract class
+    width = 0;
+    height = 0;
+
     constructor(insertTagId = 'service-insert-element-id-here') {
         this.insertTagId = insertTagId;
+        this.progressIntervalId = -1;
 
         if (this.constructor == Controller) {
             throw new Error("Abstract classes can't be instantiated.");
         }
-    }
-
-    onTrackEnd() { // fires when track ends, firing must be implemented in subclasses with listeners
-        console.log(this.insertTagId + ' track ended');
-    }
-
-    setOnTrackEnd(callback) { // is inherited and used to set the next() function to run when a track ended in playlist.js
-        this.onTrackEnd = callback;
     }
 
     async init() {
@@ -22,7 +18,7 @@ export class Controller { // abstract class
 
     // service_id: the id the service uses for songs
     // also automatically starts to play the video with this.play()
-    load(service_id) {
+    load(trackId) { // eslint-disable-line no-unused-vars
         throw new Error("Method 'load()' must be implemented.");
     }
 
@@ -35,12 +31,12 @@ export class Controller { // abstract class
     }
 
     // vol: 0-100
-    setVolume(vol) {
+    setVolume(vol) { // eslint-disable-line no-unused-vars
         throw new Error("Method 'setVolume()' must be implemented.");
     }
 
     // time in milliseconds
-    skipTo(ms) {
+    skipTo(ms) { // eslint-disable-line no-unused-vars
         throw new Error("Method 'skipTo()' must be implemented.");
     }
 
@@ -52,5 +48,38 @@ export class Controller { // abstract class
     // time returned in milliseconds
     async getDuration() {
         throw new Error("Method 'getDuration()' must be implemented.");
+    }
+
+    async getThumbnailUrl() {
+        throw new Error("Method 'getThumbnailUrl()' must be implemented.");
+    }
+
+
+
+
+    onTrackEnd() { // fires when track ends, firing must be implemented in subclasses with listeners
+        console.log(this.insertTagId + ' track ended');
+    }
+
+    setOnTrackEnd(callback) { // is inherited and used to set the next() function to run when a track ended in playlist.js
+        this.onTrackEnd = callback;
+    }
+
+    onTrackLoaded() { }
+
+    setOnTrackLoaded(callback) {
+        this.onTrackLoaded = callback;
+    }
+
+    onTrackProgress(position, duration) { } // eslint-disable-line no-unused-vars
+
+    setOnTrackProgress(callback) {
+        this.onTrackProgress = callback;
+    }
+
+    removeEventListeners() {
+        this.setOnTrackEnd(() => {});
+        this.setOnTrackLoaded(() => {});
+        this.setOnTrackProgress(() => {});
     }
 }

@@ -1,4 +1,7 @@
 import { Controller } from "@/scripts/track-controller/Controller";
+import { isProxy, toRaw } from 'vue';
+
+import SC from "@/assets/bundles/soundcloud_api";
 
 export class SoundcloudController extends Controller {
     // see https://developers.soundcloud.com/docs/api/html5-widget
@@ -7,76 +10,76 @@ export class SoundcloudController extends Controller {
     }
 
     async init() {
-        const tagid = this.insertTagId;
         return new Promise(((resolve, reject) => {
-            const parent = document.getElementById(tagid);
+            const parent = document.getElementById(this.insertTagId);
             parent.innerHTML = `<iframe id="soundcloud_widget"
                                 src="https://w.soundcloud.com/player/?url=https://soundcloud.com/tonemanufacture/cassette-tone-preview&show_artwork=false&liking=false&sharing=false&auto_play=false"
-                                width="${width}"
-                                height="${height}"
+                                width="${this.width}"
+                                height="${this.height}"
                                 allow="autoplay"
                                 frameborder="no"></iframe>`;
-            this.player = SC.Widget(parent.firstElementChild);
+            let player = SC.Widget(parent.firstElementChild);
 
-            this.player.bind(SC.Widget.Events.READY, () => {
+            player.bind(SC.Widget.Events.READY, () => {
                 console.log('init(): Soundcloud Iframe ready');
                 resolve();
             });
-            this.player.bind(SC.Widget.Events.ERROR, () => {
+            player.bind(SC.Widget.Events.ERROR, () => {
                 reject();
             });
-            this.player.bind(SC.Widget.Events.FINISH, () => { // fires when track ends
+            player.bind(SC.Widget.Events.FINISH, () => { // fires when track ends
                 this.onTrackEnd();
             });
+            this.player = player;
         }).bind(this));
     }
 
     async load(service_id) { // async function because loading takes some time and user should not be able to skip through playlist during this
+        let player = isProxy(this.player) ? toRaw(this.player) : this.player; // toRaw is required since the soundcloud api just doesn't want to work with proxies
         return new Promise(resolve => {
-            this.player.load('https://soundcloud.com/' + service_id, {callback: () => { // no preceding '/' in id, service_id is like: artist/trackname
-                    //this.play();
-                    this.pause();
-                    //setTimeout(() => this.play(), 2000); // if somehow still loading
-                    resolve();
-                }});
+            player.load('https://soundcloud.com/' + service_id, {callback: () => { // no preceding '/' in id, service_id is like: artist/trackname
+                this.onTrackLoaded();
+                this.play();
+                resolve();
+            }});
         });
     }
 
     play() {
-        this.player.getCurrentSound(sound => this.player.play());
-        // this.player.play();
+        let player = isProxy(this.player) ? toRaw(this.player) : this.player; // toRaw is required since the soundcloud api just doesn't want to work with proxies
+        player.play();
+        if (this.progressIntervalId === -1)
+            this.progressIntervalId = setInterval(async () => {
+                this.onTrackProgress(await this.getCurrentTime(), await this.getDuration());
+            }, 200);
     }
 
     pause() {
-        this.player.pause();
+        let player = isProxy(this.player) ? toRaw(this.player) : this.player; // toRaw is required since the soundcloud api just doesn't want to work with proxies
+        player.pause();
+        clearInterval(this.progressIntervalId);
+        this.progressIntervalId = -1;
     }
 
     setVolume(vol) {
-        this.player.setVolume(vol);
+        let player = isProxy(this.player) ? toRaw(this.player) : this.player; // toRaw is required since the soundcloud api just doesn't want to work with proxies
+        player.setVolume(vol);
     }
 
     skipTo(ms) {
-        this.player.seekTo(ms);
-    }
-
-    // because Soundcloud API key registration is now locked, only way to access track-metadata is via the embeds -> use second embed on page to fetch metadata when adding link (slower of course)
-    async getTrackInfo(service_id) { // warning: do not use with normal track player, only to et infos to track!
-        return new Promise(resolve => {
-            this.player.load('https://soundcloud.com/' + service_id, {callback: () => {
-                    //setTimeout(() => this.play(), 2000); // if somehow still loading
-                    this.player.getCurrentSound(sound => resolve(sound));
-                }});
-        });
+        let player = isProxy(this.player) ? toRaw(this.player) : this.player; // toRaw is required since the soundcloud api just doesn't want to work with proxies
+        player.seekTo(ms);
     }
 
     async getCurrentTime() {
+        let player = isProxy(this.player) ? toRaw(this.player) : this.player; // toRaw is required since the soundcloud api just doesn't want to work with proxies
         return new Promise(resolve =>
-            this.player.getPosition(millis => resolve(millis)));
+            player.getPosition(millis => resolve(millis)));
     }
 
     async getDuration() {
+        let player = isProxy(this.player) ? toRaw(this.player) : this.player; // toRaw is required since the soundcloud api just doesn't want to work with proxies
         return new Promise(resolve =>
-            this.player.getDuration(millis => resolve(millis)));
+            player.getDuration(millis => resolve(millis)));
     }
 }
-

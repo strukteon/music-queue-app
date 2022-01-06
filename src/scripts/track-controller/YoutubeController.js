@@ -1,4 +1,5 @@
 import { Controller } from "@/scripts/track-controller/Controller";
+import YoutubeIframeLoader from "youtube-iframe";
 
 export class YoutubeController extends Controller {
     // see https://developers.google.com/youtube/iframe_api_reference
@@ -8,13 +9,17 @@ export class YoutubeController extends Controller {
 
     async init() {
         return new Promise((resolve, reject) => {
-            YT.ready(() => {
+            YoutubeIframeLoader.load(YT =>
                 this.player = new YT.Player(this.insertTagId, {
-                    height: super.height, // set to 0
-                    width: super.width,
+                    height: this.height, // set to 0
+                    width: this.width,
                     videoId: 'CVDHQokn7mQ', // default video (cassette sound) so that iframe can load
                     events: {
-                        'onReady': () => { console.log('init(): Youtube Iframe ready'); resolve(); },
+                        'onReady': () => {
+                            document.getElementById(this.insertTagId).setAttribute("width", "0")
+                            document.getElementById(this.insertTagId).setAttribute("height", "0")
+                            resolve();
+                            },
                         'onError': reject,
                         'onStateChange': event => {
                             if(event.data === 0) {
@@ -23,24 +28,31 @@ export class YoutubeController extends Controller {
                         }
                     }
                 })
-            });
+            )
         })
     }
 
-    load(service_id) {
+    load(trackId) {
+        this.trackId = trackId;
         //this.play();
-        this.player.loadVideoById(service_id);
+        this.player.loadVideoById(trackId);
         this.pause();
-        //this.play();
+        this.onTrackLoaded();
     }
 
     play() {
         this.player.unMute();
         this.player.playVideo();
+        if (this.progressIntervalId === -1)
+            this.progressIntervalId = setInterval(() => {
+                this.onTrackProgress(this.getCurrentTime(), this.getDuration());
+            }, 200);
     }
 
     pause() {
         this.player.pauseVideo();
+        clearInterval(this.progressIntervalId);
+        this.progressIntervalId = -1;
     }
 
     setVolume(vol) {
@@ -51,11 +63,11 @@ export class YoutubeController extends Controller {
         this.player.seekTo(ms / 1000, true);
     }
 
-    async getCurrentTime() {
+    getCurrentTime() {
         return this.player.getCurrentTime() * 1000;
     }
 
-    async getDuration() {
+    getDuration() {
         return this.player.getDuration() * 1000;
     }
 }
