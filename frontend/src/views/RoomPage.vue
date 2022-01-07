@@ -1,6 +1,9 @@
 <template>
   <div>
-    <join-code :join-code="roomData.joinCode"/>
+    <div class="title-bar">
+      <h1>Welcome to {{ roomData.roomName }}!</h1>
+      <join-code :join-code="roomData.joinCode"/>
+    </div>
     <div>
       <input v-model="queueInput.trackId">
       <input v-model="queueInput.platform">
