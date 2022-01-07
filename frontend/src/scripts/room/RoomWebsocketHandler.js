@@ -1,4 +1,5 @@
 import BackendController from "@/scripts/BackendController";
+import {getPlatformClass} from "@/scripts/room/RoomHelper";
 
 export default class {
     vue = null;
@@ -39,6 +40,13 @@ export default class {
             let response = await BackendController.roomListTracks();
             this.vue.roomData.currentTrack = response.data.currentTrack;
             this.vue.roomData.queuedTracks = response.data.queuedTracks;
+            if (this.vue.roomData.currentTrack != null) {
+                let trackClass = getPlatformClass(this.vue.roomData.currentTrack.platform);
+                let track = new trackClass(this.vue.roomData.currentTrack.trackId);
+                await track.loadMetadata();
+                this.vue.$refs["track-controller"].loadTrack(track);
+                this.vue.$refs["track-controller"].activeController.play();
+            }
         }
     }
 

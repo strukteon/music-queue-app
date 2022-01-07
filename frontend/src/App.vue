@@ -1,14 +1,12 @@
 <template>
-  <div id="nav">
-    {{ id }}
-    <router-link to="/">Home</router-link> |
-    <router-link to="/dj-test-screen">About</router-link>
-  </div>
+  <navigation-bar/>
   <router-view/>
 </template>
 
 <script>
+import NavigationBar from "@/components/layout/NavigationBar";
 export default {
+  components: {NavigationBar},
   data: () => ({
     id: null,
   }),
@@ -20,7 +18,7 @@ export default {
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Poppins", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
