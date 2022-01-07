@@ -24,8 +24,13 @@ export class RoomManager {
     }
 
     #registerRoomPaths(router) {
-        router.get("/create-room", (req, res) => {
+        router.post("/create-room", (req, res) => {
             const {username, uniqueId, roomName} = req.body;
+
+            if (this.users.has(uniqueId)) {
+                res.json(generateMessage(false, "ALREADY_IN_A_ROOM"))
+                return;
+            }
 
             let room = new PartyRoom(this, roomName, uniqueId);
             this.addUser(uniqueId, new UserInfo(username, room.roomId));
@@ -34,7 +39,7 @@ export class RoomManager {
             res.json(generateMessage(true, "ROOM_CREATED", {room}));
         });
 
-        router.get("/join-room", (req, res) => {
+        router.post("/join-room", (req, res) => {
             const {username, uniqueId, joinCode} = req.body;
 
             if (this.users.has(uniqueId)) {
@@ -59,7 +64,7 @@ export class RoomManager {
             res.json(generateMessage(true, "JOINED_ROOM", {roomId: room.roomId}));
         });
 
-        router.get("/leave-room", (req, res) => {
+        router.post("/leave-room", (req, res) => {
             const { uniqueId } = req.body;
 
             if (!this.users.has(uniqueId)) {
@@ -75,7 +80,7 @@ export class RoomManager {
             res.json(generateMessage(true, "LEFT_ROOM"));
         });
 
-        router.get("/room/add-track", (req, res) => {
+        router.post("/room/add-track", (req, res) => {
             const { uniqueId, trackId, platform } = req.body;
 
             if (!this.users.has(uniqueId)) {
@@ -90,7 +95,7 @@ export class RoomManager {
             res.json(generateMessage(true, "ADDED_TRACK"));
         });
 
-        router.get("/room/next-track", (req, res) => {
+        router.post("/room/next-track", (req, res) => {
             const { uniqueId } = req.body;
 
             if (!this.users.has(uniqueId)) {
@@ -110,15 +115,15 @@ export class RoomManager {
             res.json(generateMessage(true, "NEXT_TRACK_REQUESTED"));
         });
 
-        router.get("/room/remove-track", (req, res) => {
+        router.post("/room/remove-track", (req, res) => {
 
         });
 
-        router.get("/room/change-track-index", (req, res) => {
+        router.post("/room/change-track-index", (req, res) => {
 
         })
 
-        router.get("/room/list-tracks", (req, res) => {
+        router.post("/room/list-tracks", (req, res) => {
             const { uniqueId } = req.body;
 
             if (!this.users.has(uniqueId)) {
@@ -133,9 +138,8 @@ export class RoomManager {
     }
 
     #registerUserPaths(router) {
-        router.get("/users/@me", (req, res) => {
+        router.post("/users/@me", (req, res) => {
             const { uniqueId } = req.body;
-
             if (!this.users.has(uniqueId)) {
                 res.json(generateMessage(false, "NOT_IN_A_ROOM"))
                 return;
@@ -146,7 +150,7 @@ export class RoomManager {
             res.json(generateMessage(true, null, {...user}))
         });
 
-        router.get("/users/:userid", (req, res) => {
+        router.post("/users/:userid", (req, res) => {
             let uniqueId = this.getUniqueUserId(req.params.userid);
             if (uniqueId == null) {
                 res.json(generateMessage(false, "USER_DOES_NOT_EXIST"))
@@ -200,6 +204,7 @@ export class RoomManager {
     }
 
     addUser(uniqueId, userInfo) {
+        console.log(uniqueId, "added")
         this.users.set(uniqueId, userInfo);
         this.publicIds.set(userInfo.publicId, uniqueId)
     }

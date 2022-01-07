@@ -54,7 +54,8 @@ export class PartyRoom {
     sendBroadcast(message, data = null) {
         let wsConnections = this.wsConnections.keys();
         let ws = null;
-        while ((ws = wsConnections.next())) {
+        while (! (ws = wsConnections.next()).done) {
+            console.log(ws)
             ws.send(JSON.stringify({
                 message,
                 data
