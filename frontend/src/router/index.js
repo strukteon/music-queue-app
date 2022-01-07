@@ -13,7 +13,12 @@ const routes = [
   },
   {
     path: "/create-room",
-    component: () => import("@/views/RoomDjScreen")
+    component: () => import("@/views/CreateRoomPage")
+  },
+  {
+    path: "/room",
+    name: "RoomPage",
+    component: () => import("@/views/RoomPage")
   }
 ]
 

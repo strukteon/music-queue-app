@@ -21,8 +21,7 @@ export class PartyRoom {
     }
 
     addPartyMember(uniqueId) {
-        if (!this.roomMembers.has(uniqueId))
-            this.roomMembers.set(uniqueId, new PartyRoomMember());
+        this.roomMembers.set(uniqueId, new PartyRoomMember());
         this.sendBroadcast("user_joined", this.roomManager.getPublicUserId(uniqueId));
     }
 
@@ -53,10 +52,9 @@ export class PartyRoom {
 
     sendBroadcast(message, data = null) {
         let wsConnections = this.wsConnections.keys();
-        let ws = null;
-        while (! (ws = wsConnections.next()).done) {
-            console.log(ws)
-            ws.send(JSON.stringify({
+        let entry = null;
+        while (! (entry = wsConnections.next()).done) {
+            entry.value.send(JSON.stringify({
                 message,
                 data
             }));

@@ -1,10 +1,22 @@
 <template>
   <div id="nav">
+    {{ id }}
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link>
   </div>
   <router-view/>
 </template>
+
+<script>
+export default {
+  data: () => ({
+    id: null,
+  }),
+  mounted() {
+    this.id = localStorage.getItem("uniqueId")
+  }
+}
+</script>
 
 <style>
 #app {

@@ -1,8 +1,8 @@
 import ws from "ws";
-import { Router } from "express";
-import { PartyRoom } from "./PartyRoom.js";
-import { generateMessage, generateJsonMessage } from "./helpers.js";
-import { UserInfo } from "./User.js";
+import {Router} from "express";
+import {PartyRoom} from "./PartyRoom.js";
+import {generateJsonMessage, generateMessage} from "./helpers.js";
+import {UserInfo} from "./User.js";
 import Track from "./Track.js";
 
 export class RoomManager {
@@ -65,7 +65,7 @@ export class RoomManager {
         });
 
         router.post("/leave-room", (req, res) => {
-            const { uniqueId } = req.body;
+            const {uniqueId} = req.body;
 
             if (!this.users.has(uniqueId)) {
                 res.json(generateMessage(false, "NOT_IN_A_ROOM"))
@@ -80,8 +80,22 @@ export class RoomManager {
             res.json(generateMessage(true, "LEFT_ROOM"));
         });
 
+        router.post("/room", (req, res) => {
+            const {uniqueId} = req.body;
+
+            if (!this.users.has(uniqueId)) {
+                res.json(generateMessage(false, "NOT_IN_A_ROOM"))
+                return;
+            }
+
+            let user = this.users.get(uniqueId);
+            let room = this.findRoomById(user.roomId);
+
+            res.json(generateMessage(true, null, room));
+        });
+
         router.post("/room/add-track", (req, res) => {
-            const { uniqueId, trackId, platform } = req.body;
+            const {uniqueId, trackId, platform} = req.body;
 
             if (!this.users.has(uniqueId)) {
                 res.json(generateMessage(false, "NOT_IN_A_ROOM"))
@@ -96,7 +110,7 @@ export class RoomManager {
         });
 
         router.post("/room/next-track", (req, res) => {
-            const { uniqueId } = req.body;
+            const {uniqueId} = req.body;
 
             if (!this.users.has(uniqueId)) {
                 res.json(generateMessage(false, "NOT_IN_A_ROOM"))
@@ -105,7 +119,7 @@ export class RoomManager {
             let user = this.users.get(uniqueId);
             let room = this.findRoomById(user.roomId);
 
-            if (! room.roomMembers.get(uniqueId).isAdmin) {
+            if (!room.roomMembers.get(uniqueId).isAdmin) {
                 res.json(generateMessage(false, "MUST_BE_ADMIN"))
                 return;
             }
@@ -124,7 +138,7 @@ export class RoomManager {
         })
 
         router.post("/room/list-tracks", (req, res) => {
-            const { uniqueId } = req.body;
+            const {uniqueId} = req.body;
 
             if (!this.users.has(uniqueId)) {
                 res.json(generateMessage(false, "NOT_IN_A_ROOM"))
@@ -133,13 +147,13 @@ export class RoomManager {
             let user = this.users.get(uniqueId);
             let room = this.findRoomById(user.roomId);
 
-            res.json(generateMessage(true, null, { queuedTracks: room.queuedTracks, currentTrack: room.currentTrack }))
+            res.json(generateMessage(true, null, {queuedTracks: room.queuedTracks, currentTrack: room.currentTrack}))
         })
     }
 
     #registerUserPaths(router) {
         router.post("/users/@me", (req, res) => {
-            const { uniqueId } = req.body;
+            const {uniqueId} = req.body;
             if (!this.users.has(uniqueId)) {
                 res.json(generateMessage(false, "NOT_IN_A_ROOM"))
                 return;
@@ -164,7 +178,7 @@ export class RoomManager {
     }
 
     #startWebsocketServer(server) {
-        let wss = new ws.Server({ server });
+        let wss = new ws.Server({server});
         let authenticatedWs = new Set();
 
         wss.on("connection", ws => {
@@ -173,17 +187,19 @@ export class RoomManager {
                 let message = null;
                 try {
                     message = JSON.parse(msg.toString());
-                } catch (e) { return; }
+                } catch (e) {
+                    return;
+                }
 
                 if (authenticatedWs.has(ws)) {
                     ws.send(generateJsonMessage(false, "connection already authenticated"));
                     return;
                 }
-                if (! message.uniqueId) {
+                if (!message.uniqueId) {
                     ws.send(generateJsonMessage(false, "uniqueId must be specified"));
                     return;
                 }
-                if (! this.users.has(message.uniqueId)) {
+                if (!this.users.has(message.uniqueId)) {
                     ws.send(generateJsonMessage(false, "invalid uniqueId"));
                     return;
                 }
