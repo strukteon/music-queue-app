@@ -1,5 +1,5 @@
 import { Controller } from "@/scripts/track-controller/Controller";
-import YoutubeIframeLoader from "youtube-iframe";
+import YT from "@/assets/bundles/youtube_api";
 
 export class YoutubeController extends Controller {
     // see https://developers.google.com/youtube/iframe_api_reference
@@ -9,8 +9,8 @@ export class YoutubeController extends Controller {
 
     async init() {
         return new Promise((resolve, reject) => {
-            YoutubeIframeLoader.load(YT =>
-                this.player = new YT.Player(this.insertTagId, {
+            YT.ready(() =>
+                this.player = new window.YT.Player(this.insertTagId, {
                     height: this.height, // set to 0
                     width: this.width,
                     videoId: 'CVDHQokn7mQ', // default video (cassette sound) so that iframe can load
@@ -38,6 +38,14 @@ export class YoutubeController extends Controller {
         this.player.loadVideoById(trackId);
         this.pause();
         this.onTrackLoaded();
+    }
+
+    mute() {
+        this.player.mute();
+    }
+
+    unmute() {
+        this.player.unMute();
     }
 
     play() {

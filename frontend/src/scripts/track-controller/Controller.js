@@ -22,6 +22,14 @@ export class Controller { // abstract class
         throw new Error("Method 'load()' must be implemented.");
     }
 
+    mute() {
+        throw new Error("Method 'mute()' must be implemented.");
+    }
+
+    unmute() {
+        throw new Error("Method 'unmute()' must be implemented.");
+    }
+
     play() {
         throw new Error("Method 'play()' must be implemented.");
     }

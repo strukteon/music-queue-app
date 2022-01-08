@@ -7,6 +7,7 @@ export class SoundcloudController extends Controller {
     // see https://developers.soundcloud.com/docs/api/html5-widget
     constructor(insertTagId = 'soundcloud') {
         super(insertTagId);
+        this.isMuted = false;
     }
 
     async init() {
@@ -43,6 +44,20 @@ export class SoundcloudController extends Controller {
                 resolve();
             }});
         });
+    }
+
+    mute() {
+        if (! this.isMuted) {
+            this.player.toggle();
+            this.isMuted = true;
+        }
+    }
+
+    unmute() {
+        if (this.isMuted) {
+            this.player.toggle();
+            this.isMuted = false;
+        }
     }
 
     play() {
