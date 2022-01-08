@@ -20,7 +20,7 @@
     </div>
     <div>
       <h3>Track Player</h3>
-      <track-controller ref="track-controller"/>
+      <track-controller ref="track-controller" @next="BackendController.roomNextTrack()"/>
     </div>
     <div>
       <h3>Queued Tracks</h3>
@@ -97,8 +97,9 @@ export default {
       let trackClass = getPlatformClass(this.roomData.currentTrack.platform);
       let track = new trackClass(this.roomData.currentTrack.trackId);
       await track.loadMetadata();
+      await this.$refs["track-controller"].initControllers();
       this.$refs["track-controller"].loadTrack(track);
-      this.$refs["track-controller"].activeController.play();
+      this.$refs["track-controller"].toggleStart();
     }
   },
 

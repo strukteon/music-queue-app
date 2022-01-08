@@ -2,18 +2,19 @@
   <div class="track-controller">
     <div class="track-img-wrapper">
       <img :class="{'track-img': true, 'thumbnail-yt': track.platform === 'youtube' }" :src="track.thumbnailUrl"/>
+      <font-awesome-icon class="platform-icon" :icon="fa.platformIcons[track.platform]"/>
     </div>
 
-    <div>
+    <div class="right-section">
       <div class="track-details">
-        <p class="name">{{ track.trackName }}</p>
-        <p class="artist">{{ track.artist }}</p>
+        <p class="name">{{ track.trackName || "--" }}</p>
+        <p class="artist">{{ track.artist || "--" }}</p>
       </div>
       <div class="button-section">
         <div class="buttons">
-          <button class="mute"><font-awesome-icon :icon="fa.faVolumeMute"/></button>
-          <button class="play"><font-awesome-icon :icon="true ? fa.faPause : fa.faPlay"/></button>
-          <button class="next"><font-awesome-icon :icon="fa.faStepForward"/></button>
+          <button :class="{ mute: true, active: isMuted }" @click="toggleMute"><font-awesome-icon :icon="fa.faVolumeMute"/></button>
+          <button class="play" @click="toggleStart"><font-awesome-icon :icon="isPlaying ? fa.faPause : fa.faPlay"/></button>
+          <button class="next" @click="$emit('next')"><font-awesome-icon :icon="fa.faStepForward"/></button>
         </div>
         <p class="track-submitter"><font-awesome-icon :icon="fa.faUser"/> PartyMember1</p>
       </div>
@@ -26,24 +27,17 @@
         <div class="progress-bar">
           <input type="range" v-model="progress"
                  ref="progressBar"
-                 @change="seek(); updateCSSVar();"
+                 @change="seek" @input="updateCSSVar"
                  @mousedown="this.pauseProgressUpdate = true"
                  @mouseup="this.pauseProgressUpdate = false"
                  min="0" max="1000"><br>
         </div>
       </div>
 
-      Volume:
-      <input type="range" v-model="volume" @input="updateVolume"
-             min="0" max="100"><br>
-      <br>
-      <button @click="$emit('previous')">previous</button>
-      <button @click="activeController.play()">play</button>
-      <button @click="activeController.pause()">pause</button>
-      <button @click="$emit('next')">next</button>
-
-      <div id="youtube-iframe-wrapper"></div>
-      <div id="soundcloud"></div>
+      <div class="iframes">
+        <div id="youtube-iframe-wrapper"></div>
+        <div id="soundcloud"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -52,6 +46,7 @@
 import { YoutubeController } from "@/scripts/track-controller/YoutubeController";
 import { SoundcloudController } from "@/scripts/track-controller/SoundcloudController";
 import { faVolumeMute, faStepForward, faPause, faPlay, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faSoundcloud, faYoutube } from "@fortawesome/free-brands-svg-icons";
 
 export default {
   name: "TrackController",
@@ -61,8 +56,14 @@ export default {
       faStepForward,
       faPause,
       faPlay,
-      faUser
+      faUser,
+      platformIcons: {
+        soundcloud: faSoundcloud,
+        youtube: faYoutube,
+      }
     },
+    isPlaying: false,
+    isMuted: false,
     activeController: null,
     youtubeController: null,
     soundcloudController: null,
@@ -81,11 +82,13 @@ export default {
   async mounted() {
     this.youtubeController = new YoutubeController("youtube-iframe-wrapper");
     this.soundcloudController = new SoundcloudController();
-    await this.youtubeController.init();
-    await this.soundcloudController.init();
   },
 
   methods: {
+    async initControllers() {
+      await this.youtubeController.init();
+      await this.soundcloudController.init();
+    },
     async loadTrack(track) {
       if (this.activeController !== null) {
         this.activeController.removeEventListeners();
@@ -107,6 +110,10 @@ export default {
         this.track.duration = duration;
         if (!this.pauseProgressUpdate)
           this.progress = Math.floor(position / duration * 1000);
+      });
+
+      this.activeController.setOnTrackEnd(() => {
+        this.isPlaying = false;
       })
     },
 
@@ -129,6 +136,28 @@ export default {
       }
     },
 
+    toggleStart() {
+      if (this.isPlaying) {
+        this.isPlaying = false;
+        this.activeController.pause();
+      }
+      else {
+        this.isPlaying = true;
+        this.activeController.play();
+      }
+    },
+
+    toggleMute() {
+      if (this.isMuted) {
+        this.isMuted = false;
+        this.activeController.unmute();
+      }
+      else {
+        this.isMuted = true;
+        this.activeController.mute();
+      }
+    },
+
     updateVolume() {
       this.activeController.setVolume(this.volume)
     }
@@ -136,20 +165,20 @@ export default {
 
   computed: {
     durationMinutes() {
-      if (Number.isNaN(this.track.duration)) return '-';
-      return Math.floor(this.track.duration / 60 / 1000);
+      let val = Math.floor(this.track.duration / 60 / 1000);
+      return Number.isNaN(val) ? '-' : val;
     },
     durationSeconds() {
-      if (Number.isNaN(this.track.duration)) return '--';
-      return (Math.floor((this.track.duration / 1000) % 60) + '').padStart(2, '0');
+      let val = Math.floor((this.track.duration / 1000) % 60);
+      return ((Number.isNaN(val) ? '--' : val) + '').padStart(2, '0');
     },
     positionMinutes() {
-      if (Number.isNaN(this.track.position)) return '-';
-      return Math.floor(this.track.position / 60 / 1000);
+      let val = Math.floor(this.track.position / 60 / 1000);
+      return Number.isNaN(val) ? '-' : val;
     },
     positionSeconds() {
-      if (Number.isNaN(this.track.position)) return '--';
-      return (Math.floor((this.track.position / 1000) % 60) + '').padStart(2, '0');
+      let val = Math.floor((this.track.position / 1000) % 60);
+      return ((Number.isNaN(val) ? '--' : val) + '').padStart(2, '0');
     },
   }
 }
@@ -167,7 +196,8 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
-
+      position: relative;
+      border-radius: 16px;
 
       .track-img {
         width: 100%;
@@ -177,12 +207,34 @@ export default {
       .track-img.thumbnail-yt {
         height: 134%;
       }
+      
+      .platform-icon {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        border-top-right-radius: 16px;
+        color: white;
+        padding: 1rem;
+        background-color: black;
+        font-size: 2rem;
+      }
+    }
+
+
+    .right-section {
+      padding: 1rem;
+      padding-left: 2rem;
     }
 
     .track-details > p {
       margin: 0;
       font-size: 2rem;
       line-height: 2.1rem;
+
+      max-width: 30rem;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
 
       &.name {
         color: black;
@@ -198,6 +250,7 @@ export default {
       display: flex;
       flex-direction: row;
       align-items: center;
+      margin-top: 1rem;
 
       .buttons {
         button {
@@ -213,6 +266,15 @@ export default {
 
           &:hover {
             background-color: rgba(black, .1);
+          }
+
+          &.mute {
+            color: lighten(black, 30%);
+
+            &.active {
+              color: black;
+              background-color: rgba(black, .1);
+            }
           }
 
           &.play {
@@ -245,7 +307,7 @@ export default {
 
       .progress-text {
         display: flex;
-        justify-content: center;
+        justify-content: end;
         align-items: center;
         font-weight: 600;
         font-size: 1.5rem;
@@ -253,6 +315,7 @@ export default {
 
         p {
           margin: 0;
+          line-height: 1.5rem;
         }
 
         .divider {
@@ -260,62 +323,67 @@ export default {
         }
       }
 
-      .progress-bar input[type="range"] {
-        outline: 0;
-        border: 0;
-        border-radius: 500px;
-        width: 400px;
-        max-width: 100%;
-        margin: 24px 0 16px;
+      .progress-bar {
+        input[type='range'] {
+          width: 100%;
+        }
+        input[type='range'],
+        input[type='range']::-webkit-slider-runnable-track,
+        input[type='range']::-webkit-slider-thumb {
+          -webkit-appearance: none;
+        }
 
-        @media screen and (-webkit-min-device-pixel-ratio:0) {
-          & {
-            height: 16px;
-            -webkit-appearance: none;
-          }
-          &::-webkit-slider-runnable-track {
-            height: 8px;
-            background-color: #C4C4C4;
-            border-radius: 99px;
-          }
-          &::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background-color: black;
-          }
-          &::-webkit-slider-thumb::before {
-            position: absolute;
-            content: '';
-            height: 10px; /* equal to height of runnable track */
-            width: 500px; /* make this bigger than the widest range input element */
-            left: -502px; /* this should be -2px - width */
-            top: 8px; /* don't change this */
-            background: #777;
-          }
-          &::-webkit-progress-value {
-            background-color: #2c3e50;
-          }
-          &::-moz-range-thumb {
-            background-color: black;
-            width: 16px;
-            height: 16px;
-            border: none;
-            border-radius: 50%;
-          }
-          &::-moz-range-progress, &::-moz-range-track {
-            height: 8px;
-            border-radius: 999px;
-          }
-          &::-moz-range-progress {
-            background-color: black;
-          }
-          &::-moz-range-track {
-            background-color: #C4C4C4;
-          }
+        input[type='range']::-webkit-slider-runnable-track {
+          height: 8px;
+          background: linear-gradient(to right, #293043, #293043), #D7D7D7;
+          background-size: var(--background-size, 0%) 100%;
+          background-repeat: no-repeat;
+          border-radius: 5px;
+
+        }
+
+        input[type='range']::-webkit-slider-thumb {
+          width: 16px;
+          height: 16px;
+          cursor: pointer;
+          background: black;
+          border-radius: 50%;
+          margin-top: -4px;
+        }
+
+        /** FF*/
+
+
+        input[type="range"]::-moz-range-progress, input[type="range"]::-moz-range-track {
+          height: 8px;
+          border-bottom-left-radius: 999px;
+          border-top-left-radius: 999px;
+        }
+        input[type="range"]::-moz-range-progress {
+          background-color: black;
+        }
+
+        input[type="range"]::-moz-range-track {
+          background-color: #C4C4C4;
+          border-radius: 999px;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+          width: 15px;
+          height: 15px;
+          cursor: pointer;
+          background-color: black;
+          border: 1px solid transparent;
+          border-radius: 50%;
+          margin-top: -6px;
         }
       }
+    }
+
+    .iframes {
+      position: absolute;
+      user-focus: none;
+      opacity: 0;
     }
   }
 </style>
