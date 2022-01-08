@@ -20,7 +20,7 @@
     <div class="queued-tracks-section">
       <p class="title">Next up</p>
       <div class="queued-tracks">
-
+        <queued-track v-for="(track, i) in queuedTracks" :key="track.trackId + i" :track="track"/>
       </div>
     </div>
   </div>
@@ -36,10 +36,12 @@ import JoinCode from "@/components/room/JoinCode";
 
 import { faUsers, faUser } from "@fortawesome/free-solid-svg-icons";
 import {UserManager} from "@/scripts/room/UserManager";
+import {TrackManager} from "@/scripts/room/TrackManager";
+import QueuedTrack from "@/components/room/QueuedTrack";
 
 export default {
   name: "RoomPage",
-  components: {JoinCode, TrackController},
+  components: {QueuedTrack, JoinCode, TrackController},
   data: () => ({
     fa: {
       faUsers,
@@ -51,6 +53,7 @@ export default {
       platform: 'youtube'
     },
     userManager: new UserManager(),
+    trackManager: new TrackManager(),
     roomData: {
       joinCode: "ABCDEF",
       roomMembers: [
@@ -82,9 +85,8 @@ export default {
         },
       ],
     },
-    roomMembers: {
-
-    },
+    roomMembers: [],
+    queuedTracks: [],
     websocketHandler: null,
   }),
   async mounted() {
@@ -101,18 +103,26 @@ export default {
     this.roomData = response.data;
     this.websocketHandler = new RoomWebsocketHandler(this);
 
-    if (this.roomData.currentTrack != null) {
-      let trackClass = getPlatformClass(this.roomData.currentTrack.platform);
-      let track = new trackClass(this.roomData.currentTrack.trackId);
-      await track.loadMetadata();
-      await this.$refs["track-controller"].initControllers();
-      this.$refs["track-controller"].loadTrack(track);
-      this.$refs["track-controller"].toggleStart();
-    }
+    (async () => {
+      if (this.roomData.currentTrack != null) {
+        let trackClass = getPlatformClass(this.roomData.currentTrack.platform);
+        let track = new trackClass(this.roomData.currentTrack.trackId);
+        await track.loadMetadata();
+        await this.$refs["track-controller"].initControllers();
+        this.$refs["track-controller"].loadTrack(track);
+        this.$refs["track-controller"].toggleStart();
+      }
+    })();
 
-    await this.userManager.loadUsers(this.roomData.roomMembers.map(v => v.userId));
-    this.roomMembers = this.userManager.getAllUsers();
-    console.log(this.roomMembers)
+    (async () => {
+      await this.userManager.loadUsers(this.roomData.roomMembers.map(v => v.userId));
+      this.roomMembers = this.userManager.getAllUsers();
+    })();
+
+    (async () => {
+      await this.trackManager.loadTracks(this.roomData.queuedTracks.map(v => TrackManager.createTrackObject(v.trackId, v.platform, v.userId)));
+      this.queuedTracks = this.trackManager.getTracks();
+    })();
   },
 
   methods: {

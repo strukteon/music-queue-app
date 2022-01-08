@@ -4,6 +4,7 @@ export class Track {
     thumbnailUrl = null;
     position = 0;
     duration = NaN; // in ms
+    requesterId = null;
 
     constructor(trackId, platform = 'no-platform') {
         this.trackId = trackId;
