@@ -13,10 +13,10 @@
       <div class="button-section">
         <div class="buttons">
           <button :class="{ mute: true, active: isMuted }" @click="toggleMute"><font-awesome-icon :icon="fa.faVolumeMute"/></button>
-          <button class="play" @click="toggleStart"><font-awesome-icon :icon="isPlaying ? fa.faPause : fa.faPlay"/></button>
+          <button :class="{play: true, 'is-playing': isPlaying }" @click="toggleStart"><font-awesome-icon :icon="isPlaying ? fa.faPause : fa.faPlay"/></button>
           <button class="next" @click="$emit('next')"><font-awesome-icon :icon="fa.faStepForward"/></button>
         </div>
-        <p class="track-submitter"><font-awesome-icon :icon="fa.faUser"/> PartyMember1</p>
+        <p class="track-submitter"><font-awesome-icon :icon="fa.faUser"/> {{ requesterName }}</p>
       </div>
       <div class="progress-section">
         <div class="progress-text">
@@ -47,6 +47,8 @@ import { YoutubeController } from "@/scripts/track-controller/YoutubeController"
 import { SoundcloudController } from "@/scripts/track-controller/SoundcloudController";
 import { faVolumeMute, faStepForward, faPause, faPlay, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faSoundcloud, faYoutube } from "@fortawesome/free-brands-svg-icons";
+
+import { UserManager } from "@/scripts/room/UserManager";
 
 export default {
   name: "TrackController",
@@ -180,6 +182,13 @@ export default {
       let val = Math.floor((this.track.position / 1000) % 60);
       return ((Number.isNaN(val) ? '--' : val) + '').padStart(2, '0');
     },
+
+    requesterName() {
+      console.log(this.track.requesterId)
+      let user = UserManager.getUser(this.track.requesterId);
+      if (!user) return "user not found";
+      return user.username;
+    },
   }
 }
 </script>
@@ -188,6 +197,7 @@ export default {
   .track-controller {
     display: flex;
     flex-direction: row;
+    justify-content: center;
 
     .track-img-wrapper {
       width: 200px;
@@ -224,6 +234,8 @@ export default {
     .right-section {
       padding: 1rem;
       padding-left: 2rem;
+      flex-grow: 1;
+      max-width: 512px;
     }
 
     .track-details > p {
@@ -283,6 +295,10 @@ export default {
             border: 1px transparent solid;
             background-color: black;
             color: white;
+
+            &:not(.is-playing) svg {
+              padding-left: .3rem;
+            }
 
             &:hover {
               color: darken(white, 20%);

@@ -4,6 +4,7 @@ import axios from "axios";
 export class SoundcloudTrack extends Track {
     constructor(trackId) {
         super(trackId, "soundcloud");
+        this.platformName = "Soundcloud";
     }
 
     async loadMetadata() {

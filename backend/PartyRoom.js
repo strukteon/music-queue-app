@@ -78,8 +78,8 @@ export class PartyRoom {
             roomName: this.roomName,
             roomId: this.roomId,
             creatorId: this.roomManager.getPublicUserId(this.creatorId),
-            queuedTracks: this.queuedTracks,
-            currentTrack: this.currentTrack,
+            queuedTracks: this.queuedTracks.map(v => ({...v, userId: this.roomManager.getPublicUserId(v.userId)})),
+            currentTrack: this.currentTrack == null ? null : {...this.currentTrack, userId: this.roomManager.getPublicUserId(this.currentTrack.userId)},
             roomMembers: Array.from(this.roomMembers, ([k, v]) => ({userId: this.roomManager.getPublicUserId(k), ...v})),
             bannedUsers: Array.from(this.bannedUsers, ([k, v]) => k),
             joinCode: this.joinCode

@@ -2,14 +2,14 @@ import {YoutubeTrack} from "@/scripts/track/YoutubeTrack";
 import {SoundcloudTrack} from "@/scripts/track/SoundcloudTrack";
 
 export class TrackManager {
-    tracks = [];
-    currentTrack = null;
+    static tracks = [];
+    static currentTrack = null;
 
-    setCurrentTrack(track) {
+    static setCurrentTrack(track) {
         this.currentTrack = track;
     }
 
-    async loadTracks(tracks) {
+    static async loadTracks(tracks) {
         this.tracks = tracks;
         await Promise.all(tracks.map(t => t.loadMetadata()));
     }
@@ -28,14 +28,15 @@ export class TrackManager {
         }
         let track = new TrackClass(trackId);
         track.requesterId = userId;
+        console.log("userId, use", userId, track)
         return track;
     }
 
-    getTracks() {
+    static getTracks() {
         return this.tracks;
     }
 
-    getCurrentTrack() {
+    static getCurrentTrack() {
         return this.currentTrack;
     }
 }

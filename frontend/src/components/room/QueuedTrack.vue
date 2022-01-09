@@ -8,7 +8,7 @@
         <p class="name">{{ track.trackName }}</p>
         <p class="artist">{{ track.artist }}</p>
 
-        <p class="user"><font-awesome-icon :icon="fa.faUser"/> PartyMember1</p>
+        <p class="user"><font-awesome-icon :icon="fa.faUser"/> {{ requesterName }}</p>
       </div>
       <div class="platform-info">
         <p class="from">from</p>
@@ -20,6 +20,7 @@
 
 <script>
 import {Track} from "@/scripts/track/Track";
+import {UserManager} from "@/scripts/room/UserManager";
 
 import { faSoundcloud, faYoutube } from "@fortawesome/free-brands-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -38,13 +39,20 @@ export default {
       }
     }
   }),
+  computed: {
+    requesterName() {
+      console.log(this.track.requesterId)
+      let user = UserManager.getUser(this.track.requesterId);
+      if (!user) return "user not found";
+      return user.username;
+    },
+  }
 }
 </script>
 
 <style lang="scss">
   .queued-track {
     display: flex;
-    margin: 1rem .5rem;
 
     .img-wrapper {
       width: 100px;
@@ -86,7 +94,7 @@ export default {
 
       .name, .artist {
         font-size: 1.2rem;
-        line-height: 1.3rem;
+        line-height: 1.5rem;
       }
       .name {
         font-weight: 600;

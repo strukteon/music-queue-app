@@ -1,26 +1,32 @@
 <template>
   <div class="room-page">
-    <div class="title-bar">
-      <p class="welcome-text">Welcome to <span class="room-name">{{ roomData.roomName }}</span>!</p>
-      <p>{{ BackendController.uniqueId }}</p>
-      <join-code :join-code="roomData.joinCode"/>
-    </div>
-    <div v-if="true">
-      <input v-model="queueInput.trackId">
-      <input v-model="queueInput.platform">
-      <button @click="submitTrack">Queue</button>
-    </div>
-    <track-controller class="track-controller" ref="track-controller" @next="BackendController.roomNextTrack()"/>
-    <div class="party-members-section">
-      <p class="title">Party Members <font-awesome-icon :icon="fa.faUsers"/></p>
+    <div class="left-part">
+      <div class="title-bar">
+        <p class="welcome-text">Welcome to <span class="room-name">{{ roomData.roomName }}</span>!</p>
+        <join-code :join-code="roomData.joinCode"/>
+      </div>
+      <div v-if="false">
+        <input v-model="queueInput.trackId">
+        <input v-model="queueInput.platform">
+        <button @click="submitTrack">Queue</button>
+      </div>
+      <track-controller class="track-controller" ref="track-controller" @next="BackendController.roomNextTrack()"/>
+      <div class="party-members-section">
+        <p class="title">Party Members <font-awesome-icon :icon="fa.faUsers"/></p>
 
-      <p class="member" v-for="member in roomMembers" :key="member.userId"><font-awesome-icon :icon="fa.faUser"/> {{ member.username }}</p>
+        <p class="member" v-for="member in roomMembers" :key="member.userId"><font-awesome-icon :icon="fa.faUser"/> {{ member.username }}</p>
+      </div>
     </div>
 
-    <div class="queued-tracks-section">
-      <p class="title">Next up</p>
-      <div class="queued-tracks">
-        <queued-track v-for="(track, i) in queuedTracks" :key="track.trackId + i" :track="track"/>
+    <div class="right-part">
+      <button class="add-track-button" @click="addTrackOpen = true">Add Track</button>
+      <track-add-popup v-model="addTrackOpen"/>
+
+      <div class="queued-tracks-section">
+        <p class="title">Next up</p>
+        <div class="queued-tracks">
+          <queued-track v-for="(track, i) in queuedTracks" :key="track.trackId + i" :track="track"/>
+        </div>
       </div>
     </div>
   </div>
@@ -31,29 +37,28 @@ import BackendController from "@/scripts/BackendController";
 import RoomWebsocketHandler from "@/scripts/room/RoomWebsocketHandler";
 import TrackController from "@/components/TrackController";
 
-import { getPlatformClass } from "@/scripts/room/RoomHelper";
 import JoinCode from "@/components/room/JoinCode";
 
 import { faUsers, faUser } from "@fortawesome/free-solid-svg-icons";
 import {UserManager} from "@/scripts/room/UserManager";
 import {TrackManager} from "@/scripts/room/TrackManager";
 import QueuedTrack from "@/components/room/QueuedTrack";
+import TrackAddPopup from "@/components/room/TrackAddPopup";
 
 export default {
   name: "RoomPage",
-  components: {QueuedTrack, JoinCode, TrackController},
+  components: {TrackAddPopup, QueuedTrack, JoinCode, TrackController},
   data: () => ({
     fa: {
       faUsers,
       faUser,
     },
+    addTrackOpen: true,
     BackendController,
     queueInput: {
       trackId: '',
       platform: 'youtube'
     },
-    userManager: new UserManager(),
-    trackManager: new TrackManager(),
     roomData: {
       joinCode: "ABCDEF",
       roomMembers: [
@@ -105,23 +110,22 @@ export default {
 
     (async () => {
       if (this.roomData.currentTrack != null) {
-        let trackClass = getPlatformClass(this.roomData.currentTrack.platform);
-        let track = new trackClass(this.roomData.currentTrack.trackId);
+        let track = TrackManager.createTrackObject(this.roomData.currentTrack.trackId, this.roomData.currentTrack.platform, this.roomData.currentTrack.userId)
         await track.loadMetadata();
         await this.$refs["track-controller"].initControllers();
-        this.$refs["track-controller"].loadTrack(track);
+        await this.$refs["track-controller"].loadTrack(track);
         this.$refs["track-controller"].toggleStart();
       }
     })();
 
     (async () => {
-      await this.userManager.loadUsers(this.roomData.roomMembers.map(v => v.userId));
-      this.roomMembers = this.userManager.getAllUsers();
+      await UserManager.loadUsers(this.roomData.roomMembers.map(v => v.userId));
+      this.roomMembers = UserManager.getAllUsers();
     })();
 
     (async () => {
-      await this.trackManager.loadTracks(this.roomData.queuedTracks.map(v => TrackManager.createTrackObject(v.trackId, v.platform, v.userId)));
-      this.queuedTracks = this.trackManager.getTracks();
+      await TrackManager.loadTracks(this.roomData.queuedTracks.map(v => TrackManager.createTrackObject(v.trackId, v.platform, v.userId)));
+      this.queuedTracks = TrackManager.getTracks();
     })();
   },
 
@@ -135,6 +139,12 @@ export default {
 
 <style lang="scss">
 .room-page {
+  display: flex;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  margin-top: 3rem;
+
   .title-bar {
     display: flex;
     align-items: start;
@@ -150,6 +160,11 @@ export default {
         font-style: italic;
       }
     }
+  }
+
+  .track-controller {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
   }
 
   .party-members-section {
@@ -175,6 +190,26 @@ export default {
         color: lighten(black, 70%);
       }
     }
+  }
+
+  .queued-tracks-section {
+    .title {
+      font-weight: 700;
+      color: black;
+      font-size: 1.5rem;
+      margin: 0;
+      margin-bottom: 1rem;
+    }
+    .queued-track {
+      margin: 1rem 0;
+    }
+  }
+
+  .left-part, .right-part {
+    margin: 0 2rem;
+  }
+  .left-part {
+    flex-grow: 1;
   }
 }
 </style>

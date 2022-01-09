@@ -1,9 +1,9 @@
 import BackendController from "@/scripts/BackendController";
 
 export class UserManager {
-    users = new Map();
+    static users = new Map();
 
-    async loadUsers(userIdList = []) {
+    static async loadUsers(userIdList = []) {
         console.log('started loading')
         await Promise.all(userIdList.map(async v => {
             let user = new User(v);
@@ -14,21 +14,21 @@ export class UserManager {
         console.log('finished loading')
     }
 
-    async loadUser(userId) {
+    static async loadUser(userId) {
         if (! this.users.has(userId))
             this.users.set(userId, new User(userId));
         await this.users.get(userId).loadInfos();
     }
 
-    getUser(userId) {
+    static getUser(userId) {
         return this.users.get(userId);
     }
 
-    getAllUsers() {
+    static getAllUsers() {
         return Array.from(this.users.values());
     }
 
-    removeUser(userId) {
+    static removeUser(userId) {
         this.users.delete(userId);
     }
 }

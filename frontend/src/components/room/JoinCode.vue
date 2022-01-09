@@ -1,6 +1,6 @@
 <template>
   <div class="join-code-wrapper">
-    <p class="title">Join Code: </p>
+    <p class="title">Join Code</p>
     <div class="code-wrapper">
       <p class="code">{{ isVisible ? joinCode : '******' }}</p>
       <button @click="isVisible = !isVisible"><font-awesome-icon :icon="isVisible ? faEyeSlash : faEye"/></button>
@@ -32,9 +32,12 @@ export default {
   }
 
   .title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
+    line-height: 1.25rem;
+    padding-top: .5rem;
     font-weight: 700;
     color: black;
+    text-align: center;
   }
 
   .code-wrapper {
@@ -47,7 +50,8 @@ export default {
     color: lighten(black, 30%);
 
     .code {
-      width: 5rem;
+      font-size: 1.5rem;
+      width: 6rem;
       text-align: center;
     }
 

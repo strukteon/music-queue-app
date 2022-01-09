@@ -5,6 +5,7 @@ export class Track {
     position = 0;
     duration = NaN; // in ms
     requesterId = null;
+    platformName = null;
 
     constructor(trackId, platform = 'no-platform') {
         this.trackId = trackId;

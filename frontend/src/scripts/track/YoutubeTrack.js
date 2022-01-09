@@ -4,6 +4,7 @@ import axios from "axios";
 export class YoutubeTrack extends Track {
     constructor(trackId) {
         super(trackId, "youtube");
+        this.platformName = "YouTube";
     }
 
     async loadMetadata() {
