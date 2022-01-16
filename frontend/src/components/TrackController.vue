@@ -117,20 +117,6 @@ export default {
       this.activeController.setOnTrackEnd(() => {
         this.isPlaying = false;
       });
-
-      window.addEventListener("blur", () => {
-        if (this.activeController != null) {
-          setTimeout(() => {
-            let pos = this.track.position;
-            this.activeController.load(this.track.trackId);
-            setTimeout(() => {
-              this.activeController.skipTo(pos);
-              this.activeController.play()
-            }, 200)
-            console.log("paused & unpaused")
-          }, 100)
-        }
-      })
     },
 
     async seek() {
