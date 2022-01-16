@@ -1,8 +1,9 @@
 <template>
-  <div>
-    <input type="text" placeholder="username" v-model="username"><br>
-    <input type="text" placeholder="Room Name" v-model="roomName"><br>
-    <button @click="createRoom">GO</button>
+  <div class="create-room-wrapper">
+    <h2>Create a room</h2>
+    <input type="text" placeholder="Username" v-model="username"><br>
+    <input type="text" placeholder="Room name" v-model="roomName"><br>
+    <button @click="createRoom">Create room</button>
   </div>
 </template>
 
@@ -30,6 +31,43 @@ export default {
 
 </script>
 
-<style scoped>
+<style lang="scss">
+  .create-room-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
+    input {
+      outline: none;
+      font-family: "Poppins", Helvetica, Arial, sans-serif;
+      background-color: white;
+      border: 1px lightgray solid;
+      transition: border-color .2s ease;
+      border-radius: 8px;
+      padding: .25rem .25rem;
+      width: 14rem;
+      color: lighten(black, 10%);
+      margin: .25rem;
+
+      &:focus {
+        border-color: gray;
+      }
+    }
+
+    button {
+      font-family: 'Poppins', sans-serif;
+      border: 1px transparent solid;
+      border-radius: 999px;
+      margin: .25rem;
+      font-size: 1rem;
+      padding: .5rem 1rem;
+      cursor: pointer;
+      transition: background-color .2s ease;
+
+      &[disabled] {
+        cursor: unset;
+      }
+    }
+  }
 </style>

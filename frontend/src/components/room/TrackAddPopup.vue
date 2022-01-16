@@ -141,9 +141,13 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity .2s ease;
 
   &:not(.popup-visible) {
-    display: none;
+    opacity: 0;
+    pointer-events: none;
   }
 
   .popup-card {

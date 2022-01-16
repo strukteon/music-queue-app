@@ -116,6 +116,20 @@ export default {
 
       this.activeController.setOnTrackEnd(() => {
         this.isPlaying = false;
+      });
+
+      window.addEventListener("blur", () => {
+        if (this.activeController != null) {
+          setTimeout(() => {
+            let pos = this.track.position;
+            this.activeController.load(this.track.trackId);
+            setTimeout(() => {
+              this.activeController.skipTo(pos);
+              this.activeController.play()
+            }, 200)
+            console.log("paused & unpaused")
+          }, 100)
+        }
       })
     },
 
@@ -184,7 +198,7 @@ export default {
     },
 
     requesterName() {
-      console.log(this.track.requesterId)
+      console.log("----------", this.track.requesterId)
       let user = UserManager.getUser(this.track.requesterId);
       if (!user) return "user not found";
       return user.username;
@@ -241,7 +255,7 @@ export default {
     .track-details > p {
       margin: 0;
       font-size: 2rem;
-      line-height: 2.1rem;
+      line-height: 2.6rem;
 
       max-width: 30rem;
       text-overflow: ellipsis;

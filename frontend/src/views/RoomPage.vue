@@ -19,8 +19,10 @@
     </div>
 
     <div class="right-part">
-      <button class="add-track-button" @click="addTrackOpen = true">Add Track</button>
-      <track-add-popup v-model="addTrackOpen"/>
+      <div class="add-track-button-wrapper">
+        <button class="add-track-button" @click="addTrackOpen = true">Add Track</button>
+        <track-add-popup v-model="addTrackOpen"/>
+      </div>
 
       <div class="queued-tracks-section">
         <p class="title">Next up</p>
@@ -189,6 +191,30 @@ export default {
       svg {
         color: lighten(black, 70%);
       }
+    }
+  }
+
+  .add-track-button-wrapper {
+    display: flex;
+  }
+
+  .add-track-button {
+    display: block;
+    flex-grow: 1;
+    font-family: "Poppins", sans-serif;
+    border: 1px transparent solid;
+    border-radius: 999px;
+    margin: 0.25rem;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    background-color: lighten(black, 40%);
+    color: white;
+    margin: .5rem;
+
+    &:hover {
+      background-color: lighten(black, 20%);
     }
   }
 

@@ -147,7 +147,9 @@ export class RoomManager {
             let user = this.users.get(uniqueId);
             let room = this.findRoomById(user.roomId);
 
-            res.json(generateMessage(true, null, {queuedTracks: room.queuedTracks, currentTrack: room.currentTrack}))
+            res.json(generateMessage(true, null, {
+                queuedTracks: room.queuedTracks.map(v => ({...v, userId: this.getPublicUserId(v.userId)})),
+                currentTrack: room.currentTrack == null ? null : {...room.currentTrack, userId: this.getPublicUserId(room.currentTrack.userId)}}))
         })
     }
 

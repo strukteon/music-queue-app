@@ -3,7 +3,6 @@
     <router-link to="/" class="logo"><img src="@/assets/images/musiq_logo_v2.svg"/></router-link>
     <div class="nav-links">
       <router-link to="/">Home</router-link>
-      <router-link to="/dj-test-screen">Test Screen</router-link>
     </div>
   </nav>
 </template>

@@ -41,7 +41,6 @@ export default {
   }),
   computed: {
     requesterName() {
-      console.log(this.track.requesterId)
       let user = UserManager.getUser(this.track.requesterId);
       if (!user) return "user not found";
       return user.username;
