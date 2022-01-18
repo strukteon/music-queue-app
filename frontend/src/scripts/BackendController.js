@@ -1,8 +1,8 @@
 import axios from "axios";
 
 export default class {
-    static url = "http://10.0.0.7/api";
-    static websocketUrl = "ws://10.0.0.7";
+    static url = `${window.location.protocol}://${window.location.hostname}/api`;
+    static websocketUrl = `ws${window.location.protocol === 'https:' ? 's' : ''}://${window.location.hostname}`;
 
     static setUniqueId(uniqueId) {
         this.uniqueId = uniqueId;

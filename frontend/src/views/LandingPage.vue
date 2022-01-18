@@ -27,7 +27,10 @@ export default {
   name: "LandingPage",
   methods: {
     startVideo(event) {
-
+      event.target.firstChild.play();
+    },
+    pauseVideo(event) {
+      event.target.firstChild.pause();
     }
   }
 }
