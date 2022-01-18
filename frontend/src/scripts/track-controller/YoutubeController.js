@@ -32,10 +32,10 @@ export class YoutubeController extends Controller {
         })
     }
 
-    load(trackId) {
+    load(trackId, startSeconds = 0) {
         this.trackId = trackId;
         //this.play();
-        this.player.loadVideoById(trackId);
+        this.player.loadVideoById(trackId, startSeconds, "small");
         this.pause();
         this.onTrackLoaded();
     }

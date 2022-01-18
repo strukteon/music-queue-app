@@ -1,6 +1,6 @@
 <template>
   <navigation-bar/>
-  <router-view/>
+  <router-view class="router-view"/>
 </template>
 
 <script>
@@ -19,11 +19,12 @@ export default {
 <style>
 html, body {
   margin: 0;
-}
-
-#app {
   font-family: "Poppins", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.router-view {
+  padding-top: 2rem;
 }
 </style>

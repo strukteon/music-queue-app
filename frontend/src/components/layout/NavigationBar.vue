@@ -17,7 +17,10 @@ export default {
 nav {
   display: flex;
   height: 60px;
-  background-color: #42b983;
+  width: 100%;
+  background-color: #3d74bd;
+  position: fixed;
+  top: 0;
 
   .logo {
     padding: .75rem;
@@ -38,7 +41,7 @@ nav {
 
     > * {
       text-decoration: none;
-      color: black;
+      color: white;
       font-size: 1.25rem;
       padding: .5rem;
       margin: .3rem;

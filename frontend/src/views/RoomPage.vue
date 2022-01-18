@@ -184,7 +184,13 @@ export default {
       }
     }
 
+    .member-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
     .member {
+      margin: .5rem;
       color: lighten(black, 50%);
       font-style: italic;
 

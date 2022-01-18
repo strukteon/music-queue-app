@@ -1,8 +1,24 @@
 <template>
-  <div class="menu-selection">
-    <h2>Ready to Rumble?</h2>
-    <router-link to="/join">Add some Tunes / Join a room</router-link>
-    <router-link to="/create-room">Create a Room</router-link>
+  <div class="starting-screen">
+    <div class="title-wrapper">
+      <h1 class="title">Listening to music yet?</h1>
+      <p class="subtitle">Let the party start.</p>
+    </div>
+
+    <div class="selection-wrapper">
+      <router-link to="/join" class="join-room">
+        <video class="video" :src="require('@/assets/videos/ezgif.com-gif-maker(4).mp4')" loop></video>
+        <p>Join a room</p>
+      </router-link>
+      <router-link to="/create-room" class="create-room">
+        <video class="video" :src="require('@/assets/videos/ezgif.com-gif-maker(1).mp4')" loop></video>
+        <p>Create a room</p>
+      </router-link>
+    </div>
+
+    <div class="about-the-project">
+      <p>About the project</p>
+    </div>
   </div>
 </template>
 
@@ -13,28 +29,90 @@ export default {
 </script>
 
 <style lang="scss">
-  .menu-selection {
+  .starting-screen {
+    background-color: #1f1521;
+    color: #f5f7f3;
+    padding: 2rem;
+    padding-top: 4rem;
+
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    margin: 0;
 
-    a {
-      font-family: "Poppins", sans-serif;
-      border: 1px transparent solid;
-      border-radius: 999px;
-      margin: 0.25rem;
-      font-size: 1rem;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-      background-color: #e9e9ed;
-      text-decoration: none;
-      color: black;
+    height: 100vh;
+    box-sizing: border-box;
 
-      &:hover {
-        background-color: #d0d0d7;
+    .title-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      margin: 7rem 0 1rem 0;
+
+      .title {
+        font-size: 5rem;
+        margin: 0;
+        font-weight: 700;
       }
+
+      .subtitle {
+        margin: 0;
+        font-weight: 400;
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+      }
+    }
+
+    .selection-wrapper {
+      display: flex;
+
+      margin: auto 0;
+
+      > a {
+        width: 480px;
+        aspect-ratio: 16/10;
+        margin: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 24px;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+
+        &.join-room p {
+          background-color: rgba(#3D74BD, .5);
+        }
+
+        &.create-room p {
+          background-color: rgba(#AD3F59, .65);
+        }
+
+        p {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: white;
+          font-size: 3.5rem;
+          font-weight: 700;
+          width: 100%;
+          height: 100%;
+          z-index: 1;
+        }
+        
+        video {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          filter: saturate(0);
+        }
+      }
+    }
+
+    .about-the-project {
+      margin-top: auto;
     }
   }
 </style>
