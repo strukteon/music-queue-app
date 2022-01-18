@@ -6,8 +6,8 @@ services:
       - letsencrypt
     environment:
       PORT: 80
-      VIRTUAL_HOST: strukteon.net
-      LETSENCRYPT_HOST: strukteon.net
+      VIRTUAL_HOST: musiq-dev.strukteon.net
+      LETSENCRYPT_HOST: musiq-dev.strukteon.net
       LETSENCRYPT_EMAIL: sensentod@gmail.com
 
 networks:
