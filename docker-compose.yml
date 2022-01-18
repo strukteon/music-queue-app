@@ -3,7 +3,7 @@ services:
   musiq:
     build: .
     networks:
-      - letsencrypt
+      - nginx-sidecar
     environment:
       PORT: 80
       VIRTUAL_HOST: musiq-dev.strukteon.net
