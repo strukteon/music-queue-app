@@ -1,14 +1,17 @@
 <template>
   <div class="track-controller">
-    <div class="track-img-wrapper">
+    <div v-if="track != null" class="track-img-wrapper">
       <img :class="{'track-img': true, 'thumbnail-yt': track.platform === 'youtube' }" :src="track.thumbnailUrl"/>
       <font-awesome-icon class="platform-icon" :icon="fa.platformIcons[track.platform]"/>
+    </div>
+    <div v-else class="track-img-wrapper">
+      <img class="track-img musiq-logo" :src="require('@/assets/images/musiq_logo.svg')"/>
     </div>
 
     <div class="right-section">
       <div class="track-details">
-        <p class="name">{{ track.trackName || "--" }}</p>
-        <p class="artist">{{ track.artist || "--" }}</p>
+        <p class="name">{{ track?.trackName || "No track is playing" }}</p>
+        <p class="artist">{{ track?.artist || "enjoy musiq!" }}</p>
       </div>
       <div class="button-section">
         <div class="buttons">
@@ -16,15 +19,15 @@
           <button :class="{play: true, 'is-playing': isPlaying }" @click="toggleStart"><font-awesome-icon :icon="isPlaying ? fa.faPause : fa.faPlay"/></button>
           <button class="next" @click="$emit('next')"><font-awesome-icon :icon="fa.faStepForward"/></button>
         </div>
-        <p class="track-submitter"><font-awesome-icon :icon="fa.faUser"/> {{ requesterName }}</p>
+        <p v-if="track != null" class="track-submitter"><font-awesome-icon :icon="fa.faUser"/> {{ requesterName }}</p>
       </div>
       <div class="progress-section">
-        <div class="progress-text">
+        <div v-if="track != null" class="progress-text">
           <p>{{ positionMinutes }}:{{ positionSeconds }}</p>
           <p class="divider">/</p>
           <p>{{ durationMinutes }}:{{ durationSeconds }}</p>
         </div>
-        <div class="progress-bar">
+        <div v-if="track != null" class="progress-bar">
           <input type="range" v-model="progress"
                  ref="progressBar"
                  @change="seek" @input="updateCSSVar"
@@ -49,6 +52,7 @@ import { faVolumeMute, faStepForward, faPause, faPlay, faUser } from "@fortaweso
 import { faSoundcloud, faYoutube } from "@fortawesome/free-brands-svg-icons";
 
 import { UserManager } from "@/scripts/room/UserManager";
+import { deviceIsMobile } from "@/scripts/Tools";
 
 export default {
   name: "TrackController",
@@ -69,7 +73,7 @@ export default {
     activeController: null,
     youtubeController: null,
     soundcloudController: null,
-    track: {},
+    track: null,
     pauseProgressUpdate: false,
     progress: 0,
     volume: 100,
@@ -117,6 +121,19 @@ export default {
       this.activeController.setOnTrackEnd(() => {
         this.isPlaying = false;
       });
+
+      if (deviceIsMobile()) {
+        window.addEventListener("blur", () => {
+          if (this.activeController != null) {
+            setTimeout(() => {
+              let pos = this.track.position;
+              this.activeController.load(this.track.trackId, pos / 1000);
+              this.activeController.play();
+              console.log("paused & unpaused")
+            }, 100)
+          }
+        })
+      }
     },
 
     async seek() {
@@ -197,7 +214,9 @@ export default {
   .track-controller {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
+    column-gap: 1rem;
 
     .track-img-wrapper {
       width: 200px;
@@ -213,6 +232,14 @@ export default {
         width: 100%;
         height: 100%;
         object-fit: cover;
+      }
+      .musiq-logo {
+        width: 100%;
+        height: 100%;
+        padding: 1rem;
+        color: white;
+        object-fit: contain;
+        background-color: lightgrey;
       }
       .track-img.thumbnail-yt {
         height: 134%;
@@ -233,7 +260,6 @@ export default {
 
     .right-section {
       padding: 1rem;
-      padding-left: 2rem;
       flex-grow: 1;
       max-width: 512px;
     }
@@ -243,7 +269,7 @@ export default {
       font-size: 2rem;
       line-height: 2.6rem;
 
-      max-width: 30rem;
+      max-width: min(85vw, 30rem);
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
@@ -335,6 +361,7 @@ export default {
         }
 
         .divider {
+          color: lightgrey;
           margin: auto .2rem;
         }
       }

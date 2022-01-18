@@ -27,6 +27,7 @@
       <div class="queued-tracks-section">
         <p class="title">Next up</p>
         <div class="queued-tracks">
+          <blank-queued-track v-if="true"/>
           <queued-track v-for="(track, i) in queuedTracks" :key="track.trackId + i" :track="track"/>
         </div>
       </div>
@@ -46,10 +47,11 @@ import {UserManager} from "@/scripts/room/UserManager";
 import {TrackManager} from "@/scripts/room/TrackManager";
 import QueuedTrack from "@/components/room/QueuedTrack";
 import TrackAddPopup from "@/components/room/TrackAddPopup";
+import BlankQueuedTrack from "@/components/blank/BlankQueuedTrack";
 
 export default {
   name: "RoomPage",
-  components: {TrackAddPopup, QueuedTrack, JoinCode, TrackController},
+  components: {BlankQueuedTrack, TrackAddPopup, QueuedTrack, JoinCode, TrackController},
   data: () => ({
     fa: {
       faUsers,
@@ -140,23 +142,34 @@ export default {
 </script>
 
 <style lang="scss">
+@use "~@/assets/styles/colors.scss";
+
+
 .room-page {
+  border: 1px solid green !important;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
   margin-top: 3rem;
 
   .title-bar {
+    border: 1px solid green !important;
     display: flex;
+    flex-wrap: wrap;
     align-items: start;
-    justify-content: space-between;
+    justify-content: center;
+    row-gap: 1rem;
 
     .welcome-text {
       font-size: 2rem;
       font-weight: 600;
       color: black;
       margin: 0;
+      flex-grow: 1;
+      text-align: center;
 
       .room-name {
         font-style: italic;
@@ -165,11 +178,13 @@ export default {
   }
 
   .track-controller {
+    border: 1px solid green !important;
     margin-top: 2rem;
     margin-bottom: 2rem;
   }
 
   .party-members-section {
+    border: 1px solid green !important;
     .title {
       display: flex;
       margin: 1rem auto;
@@ -201,6 +216,7 @@ export default {
   }
 
   .add-track-button-wrapper {
+    border: 1px solid green !important;
     display: flex;
   }
 
@@ -225,6 +241,11 @@ export default {
   }
 
   .queued-tracks-section {
+    border: 1px solid green !important;
+    flex-grow: 1;
+    display: block;
+    width: min(calc(100vw - 1.5rem), 480px);
+
     .title {
       font-weight: 700;
       color: black;
@@ -238,6 +259,7 @@ export default {
   }
 
   .left-part, .right-part {
+    border: 1px solid green !important;
     margin: 0 2rem;
   }
   .left-part {

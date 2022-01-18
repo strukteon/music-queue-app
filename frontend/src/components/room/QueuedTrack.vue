@@ -54,15 +54,15 @@ export default {
     display: flex;
 
     .img-wrapper {
-      width: 100px;
-      height: 100px;
+      width: min(100px, 20vw);
+      height: min(100px, 20vw);
       overflow: hidden;
       border-radius: 8px;
       display: flex;
       justify-content: center;
       align-items: center;
 
-      img {
+      > * {
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -82,7 +82,7 @@ export default {
       flex-direction: column;
       justify-content: center;
       padding: 0 1rem;
-      width: 15rem;
+      width: min(15rem, 50vw);
 
       p {
         margin: 0;
