@@ -2,6 +2,8 @@ version: "3"
 services:
   musiq:
     build: .
+    networks:
+      - letsencrypt
     environment:
       PORT: 80
       VIRTUAL_HOST: strukteon.net
