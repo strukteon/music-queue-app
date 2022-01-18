@@ -48,29 +48,33 @@ export default {
       flex-direction: column;
       align-items: center;
 
-      margin: 7rem 0 1rem 0;
+      margin: min(7rem, 10vw) 0 1rem 0;
 
       .title {
-        font-size: 5rem;
+        font-size: min(5rem, 10vw);
         margin: 0;
         font-weight: 700;
+        text-align: center;
       }
 
       .subtitle {
         margin: 0;
         font-weight: 400;
-        font-size: 1.5rem;
+        font-size: min(1.5rem, 5vw);
         margin-bottom: 2rem;
       }
     }
 
     .selection-wrapper {
       display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
 
       margin: auto 0;
 
       > a {
-        width: 480px;
+        width: min(480px, 80vw);
+        min-height: 200px;
         aspect-ratio: 16/10;
         margin: 1rem;
         display: flex;
@@ -94,7 +98,7 @@ export default {
           justify-content: center;
           align-items: center;
           color: white;
-          font-size: 3.5rem;
+          font-size: min(3.5rem, 8vw);
           font-weight: 700;
           width: 100%;
           height: 100%;

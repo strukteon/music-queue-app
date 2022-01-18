@@ -113,6 +113,10 @@ export class SpotifyController extends Controller {
         });
     }
 
+    isPlayable() {
+        return true;
+    }
+
     async getCurrentTime() {
         if (!this.state?.position) return 0;
         return this.state.position;

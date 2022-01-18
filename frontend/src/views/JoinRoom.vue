@@ -18,7 +18,8 @@ export default {
   }),
   methods: {
     async joinRoom() {
-      console.log(await BackendController.joinRoom(this.username, this.joinCode))
+      console.log(await BackendController.joinRoom(this.username, this.joinCode));
+      this.$router.push({ name: "RoomPage" });
     }
   }
 }

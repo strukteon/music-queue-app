@@ -38,7 +38,7 @@ export default {
 </script>
 
 <style lang="scss">
-.queued-tracks > div {
+.queued-track.blank {
   .img-blank {
     background-color: lightgrey;
   }

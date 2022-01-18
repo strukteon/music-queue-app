@@ -16,8 +16,6 @@ export class YoutubeController extends Controller {
                     videoId: 'CVDHQokn7mQ', // default video (cassette sound) so that iframe can load
                     events: {
                         'onReady': () => {
-                            document.getElementById(this.insertTagId).setAttribute("width", "0")
-                            document.getElementById(this.insertTagId).setAttribute("height", "0")
                             resolve();
                             },
                         'onError': reject,
@@ -69,6 +67,10 @@ export class YoutubeController extends Controller {
 
     skipTo(ms) {
         this.player.seekTo(ms / 1000, true);
+    }
+
+    async isPlayable() {
+        return this.player.getAvailableQualityLevels().length > 0;
     }
 
     getCurrentTime() {

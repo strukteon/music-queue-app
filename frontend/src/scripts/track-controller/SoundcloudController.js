@@ -86,6 +86,12 @@ export class SoundcloudController extends Controller {
         player.seekTo(ms);
     }
 
+    isPlayable() {
+        return new Promise(resolve => this.player.getCurrentSound(sound => {
+            resolve(sound.duration === sound.full_duration);
+        }));
+    }
+
     async getCurrentTime() {
         let player = isProxy(this.player) ? toRaw(this.player) : this.player; // toRaw is required since the soundcloud api just doesn't want to work with proxies
         return new Promise(resolve =>

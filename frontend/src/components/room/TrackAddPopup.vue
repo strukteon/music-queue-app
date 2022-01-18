@@ -132,7 +132,7 @@ export default {
 
 <style lang="scss">
 .track-add-popup-overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   background-color: rgba(black, .6);
@@ -144,6 +144,7 @@ export default {
   opacity: 1;
   pointer-events: auto;
   transition: opacity .2s ease;
+  z-index: 10000;
 
   &:not(.popup-visible) {
     opacity: 0;
@@ -152,7 +153,7 @@ export default {
 
   .popup-card {
     background-color: white;
-    width: 30rem;
+    width: min(30rem, 80vw);
     border-radius: 1rem;
     padding: 1.5rem;
 
@@ -207,6 +208,9 @@ export default {
     }
 
     .input {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       input {
         outline: none;
         font-family: "Poppins", Helvetica, Arial, sans-serif;
@@ -218,6 +222,7 @@ export default {
         width: 14rem;
         color: lighten(black, 10%);
         margin: .25rem;
+        flex-grow: 1;
 
         &:focus {
           border-color: gray;
@@ -276,7 +281,7 @@ export default {
 
         p {
           margin: 0;
-          width: 300px;
+          width: min(300px, 50vw);
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;

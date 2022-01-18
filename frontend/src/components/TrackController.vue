@@ -201,7 +201,7 @@ export default {
     },
 
     requesterName() {
-      console.log("----------", this.track.requesterId)
+      console.log("----------", this.track)
       let user = UserManager.getUser(this.track.requesterId);
       if (!user) return "user not found";
       return user.username;
@@ -424,9 +424,6 @@ export default {
     }
 
     .iframes {
-      position: absolute;
-      user-focus: none;
-      opacity: 0;
     }
   }
 </style>

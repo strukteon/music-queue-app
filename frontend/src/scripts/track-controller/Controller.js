@@ -62,7 +62,9 @@ export class Controller { // abstract class
         throw new Error("Method 'getThumbnailUrl()' must be implemented.");
     }
 
-
+    async isPlayable() {
+        throw new Error("Method 'isPlayable()' must be implemented.");
+    }
 
 
     onTrackEnd() { // fires when track ends, firing must be implemented in subclasses with listeners

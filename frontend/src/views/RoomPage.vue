@@ -57,7 +57,7 @@ export default {
       faUsers,
       faUser,
     },
-    addTrackOpen: true,
+    addTrackOpen: false,
     BackendController,
     queueInput: {
       trackId: '',
