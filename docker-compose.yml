@@ -1,0 +1,14 @@
+version: "3"
+services:
+  musiq:
+    build: .
+    environment:
+      PORT: 80
+      VIRTUAL_HOST: strukteon.net
+      LETSENCRYPT_HOST: strukteon.net
+      LETSENCRYPT_EMAIL: sensentod@gmail.com
+
+networks:
+  nginx-sidecar:
+    external:
+      name: letsencrypt
