@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export default class {
-    static url = `${window.location.protocol}://${window.location.hostname}/api`;
+    static url = `${window.location.protocol}//${window.location.hostname}/api`;
     static websocketUrl = `ws${window.location.protocol === 'https:' ? 's' : ''}://${window.location.hostname}`;
 
     static setUniqueId(uniqueId) {
@@ -16,6 +16,7 @@ export default class {
     static async createRoom(username, roomName) {
         this.loadUniqueId();
         console.log(this.uniqueId)
+        alert(`${this.url}/create-room`)
         return (await axios.post(`${this.url}/create-room`, {
             uniqueId: this.uniqueId,
             username,

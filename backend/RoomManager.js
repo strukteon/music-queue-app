@@ -6,7 +6,6 @@ import {UserInfo} from "./User.js";
 import Track from "./Track.js";
 
 export class RoomManager {
-    router = Router();
     rooms = [];
     users = new Map();
     publicIds = new Map();
