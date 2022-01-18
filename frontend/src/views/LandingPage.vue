@@ -6,11 +6,11 @@
     </div>
 
     <div class="selection-wrapper">
-      <router-link to="/join" class="join-room">
+      <router-link to="/join" class="join-room" @mouseenter="startVideo" @mouseleave="pauseVideo">
         <video class="video" :src="require('@/assets/videos/ezgif.com-gif-maker(4).mp4')" loop></video>
         <p>Join a room</p>
       </router-link>
-      <router-link to="/create-room" class="create-room">
+      <router-link to="/create-room" class="create-room" @mouseenter="startVideo" @mouseleave="pauseVideo">
         <video class="video" :src="require('@/assets/videos/ezgif.com-gif-maker(1).mp4')" loop></video>
         <p>Create a room</p>
       </router-link>
@@ -25,12 +25,19 @@
 <script>
 export default {
   name: "LandingPage",
+  methods: {
+    startVideo(event) {
+
+    }
+  }
 }
 </script>
 
 <style lang="scss">
+@use "~@/assets/styles/colors.scss";
+
   .starting-screen {
-    background-color: #1f1521;
+    background-color: colors.$darkblue;
     color: #f5f7f3;
     padding: 2rem;
     padding-top: 4rem;
