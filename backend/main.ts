@@ -1,9 +1,10 @@
-import express from 'express';
+import express, {Router} from 'express';
 import bodyParser from "body-parser";
 import http from 'http';
 import cors from 'cors';
 import fs from "fs";
-import { RoomManager } from "./RoomManager.js";
+import {RoomManager} from "./core/RoomManager";
+import {setup} from "./core/ExpressRouterPaths";
 
 const app = express();
 const server = http.createServer(app);
@@ -12,7 +13,10 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors());
 
-new RoomManager(app, server);
+let roomManager = new RoomManager(server);
+let router = Router();
+setup(router, roomManager);
+app.use("/api", router);
 
 app.use(express.static("../frontend/dist"))
 
