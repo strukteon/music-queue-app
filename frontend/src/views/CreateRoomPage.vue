@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import BackendController from "@/scripts/BackendController";
+import {Room} from "@/scripts/models/Room";
 
 export default {
   name: "CreateRoomPage",
@@ -18,8 +18,7 @@ export default {
   }),
   methods: {
     async createRoom() {
-      let res = await BackendController.createRoom(this.username, this.roomName);
-      console.log(res, BackendController.uniqueId)
+      let res = await Room.create(this.roomName, this.username);
       if (! res.success) {
         alert(JSON.stringify(res));
         return;

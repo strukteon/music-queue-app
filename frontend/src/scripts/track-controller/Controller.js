@@ -1,6 +1,6 @@
 export class Controller { // abstract class
-    width = 0;
-    height = 0;
+    width = 200;
+    height = 200;
 
     constructor(insertTagId = 'service-insert-element-id-here') {
         this.insertTagId = insertTagId;

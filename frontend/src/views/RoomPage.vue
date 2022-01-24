@@ -2,15 +2,10 @@
   <div class="room-page">
     <div class="left-part">
       <div class="title-bar">
-        <p class="welcome-text">Welcome to <span class="room-name">{{ roomData.roomName }}</span>!</p>
-        <join-code :join-code="roomData.joinCode"/>
+        <p class="welcome-text">Welcome to <span class="room-name">{{ room.roomName }}</span>!</p>
+        <join-code :join-code="room.joinCode"/>
       </div>
-      <div v-if="false">
-        <input v-model="queueInput.trackId">
-        <input v-model="queueInput.platform">
-        <button @click="submitTrack">Queue</button>
-      </div>
-      <track-controller class="track-controller" ref="track-controller" @next="BackendController.roomNextTrack()"/>
+      <track-controller class="track-controller" ref="track-controller" @next="Room.Tracks.next()"/>
       <div class="party-members-section">
         <p class="title">Party Members <font-awesome-icon :icon="fa.faUsers"/></p>
 
@@ -37,17 +32,21 @@
 
 <script>
 import BackendController from "@/scripts/BackendController";
-import RoomWebsocketHandler from "@/scripts/room/RoomWebsocketHandler";
+import {RoomWebsocketHandler} from "@/scripts/room/RoomWebsocketHandler";
 import TrackController from "@/components/TrackController";
 
 import JoinCode from "@/components/room/JoinCode";
 
 import { faUsers, faUser } from "@fortawesome/free-solid-svg-icons";
-import {UserManager} from "@/scripts/room/UserManager";
+// import {UserManager} from "@/scripts/room/UserManager";
 import {TrackManager} from "@/scripts/room/TrackManager";
 import QueuedTrack from "@/components/room/QueuedTrack";
 import TrackAddPopup from "@/components/room/TrackAddPopup";
 import BlankQueuedTrack from "@/components/blank/BlankQueuedTrack";
+
+import {Room} from "@/scripts/models/Room";
+
+const {MemberManager} = require("@/scripts/room/MemberManager");
 
 export default {
   name: "RoomPage",
@@ -59,46 +58,44 @@ export default {
     },
     addTrackOpen: false,
     BackendController,
-    queueInput: {
-      trackId: '',
-      platform: 'youtube'
-    },
-    roomData: {
-      joinCode: "ABCDEF",
-      roomMembers: [
-        {
-          "userId": "8654475980237673",
-          "isAdmin": true
-        }
-      ],
-      currentTrack: {
-        "userId": "amisdajsodijaosdnsadasdawd",
-        "trackId": "WkVvG4QTO9M",
-        "platform": "youtube"
-      },
-      "queuedTracks": [
-        {
-          "userId": "amisdajsodijaosdnsadasdawd",
-          "trackId": "WkVvG4QTO9M",
-          "platform": "youtube"
-        },
-        {
-          "userId": "amisdajsodijaosdnsadasdawd",
-          "trackId": "WkVvG4QTO9M",
-          "platform": "youtube"
-        },
-        {
-          "userId": "amisdajsodijaosdnsadasdawd",
-          "trackId": "WkVvG4QTO9M",
-          "platform": "youtube"
-        },
-      ],
-    },
+    Room,
+    room: { },
     roomMembers: [],
+    TrackManager,
+    currentTrack: null,
     queuedTracks: [],
     websocketHandler: null,
   }),
-  async mounted() {
+  async beforeCreate() {
+    BackendController.loadUniqueId();
+    console.log(BackendController.uniqueId)
+
+    let room = await Room.getCurrent();
+    if (! room) alert("Error: not in room");
+    this.room = room;
+
+    console.log(Room.Tracks)
+    let tracks = await Room.Tracks.getAll();
+    if (tracks.success && tracks.data.currentTrack !== null)
+      await TrackManager.loadCurrentTrack(TrackManager.createTrackObject(tracks.data.currentTrack));
+    await TrackManager.loadQueuedTracks(tracks.data.queuedTracks.map(t => TrackManager.createTrackObject(t)));
+    this.currentTrack = TrackManager.getCurrentTrack();
+    this.queuedTracks = TrackManager.getQueuedTracks();
+
+    if (! this.$refs["track-controller"].isInitialized)
+      await this.$refs["track-controller"].initControllers();
+    if (this.currentTrack !== null)
+      this.$refs["track-controller"].loadTrack(this.currentTrack);
+
+    console.log(MemberManager.members)
+    await MemberManager.loadAllMembers();
+    this.roomMembers = MemberManager.getAllMembers();
+
+    this.websocketHandler = new RoomWebsocketHandler(this);
+    console.log("xxxx")
+  },
+
+  /*async mounted() {
     let response = await BackendController.getRoomData();
 
     if (!response.success && response.message === "NOT_IN_A_ROOM") {
@@ -131,12 +128,9 @@ export default {
       await TrackManager.loadTracks(this.roomData.queuedTracks.map(v => TrackManager.createTrackObject(v.trackId, v.platform, v.userId)));
       this.queuedTracks = TrackManager.getTracks();
     })();
-  },
+  },*/
 
   methods: {
-    async submitTrack() {
-      await BackendController.roomAddTrack(this.queueInput.trackId, this.queueInput.platform);
-    }
   },
 }
 </script>
@@ -146,7 +140,6 @@ export default {
 
 
 .room-page {
-  border: 1px solid green !important;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -156,7 +149,6 @@ export default {
   margin-top: 3rem;
 
   .title-bar {
-    border: 1px solid green !important;
     display: flex;
     flex-wrap: wrap;
     align-items: start;
@@ -178,13 +170,11 @@ export default {
   }
 
   .track-controller {
-    border: 1px solid green !important;
     margin-top: 2rem;
     margin-bottom: 2rem;
   }
 
   .party-members-section {
-    border: 1px solid green !important;
     .title {
       display: flex;
       margin: 1rem auto;
@@ -216,7 +206,6 @@ export default {
   }
 
   .add-track-button-wrapper {
-    border: 1px solid green !important;
     display: flex;
   }
 
@@ -241,7 +230,6 @@ export default {
   }
 
   .queued-tracks-section {
-    border: 1px solid green !important;
     flex-grow: 1;
     display: block;
     width: min(calc(100vw - 1.5rem), 480px);
@@ -259,7 +247,6 @@ export default {
   }
 
   .left-part, .right-part {
-    border: 1px solid green !important;
     margin: 0 2rem;
   }
   .left-part {

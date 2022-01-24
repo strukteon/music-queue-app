@@ -4,12 +4,16 @@ export class Track {
     thumbnailUrl = null;
     position = 0;
     duration = NaN; // in ms
-    requesterId = null;
+    requesterUid = null;
     platformName = null;
 
     constructor(trackId, platform = 'no-platform') {
         this.trackId = trackId;
         this.platform = platform;
+    }
+
+    setRequesterUid(uid) {
+        this.requesterUid = uid;
     }
 
     async loadMetadata() {

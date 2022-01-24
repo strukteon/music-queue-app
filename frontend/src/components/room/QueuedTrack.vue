@@ -20,7 +20,7 @@
 
 <script>
 import {Track} from "@/scripts/track/Track";
-import {UserManager} from "@/scripts/room/UserManager";
+import {MemberManager} from "@/scripts/room/MemberManager";
 
 import { faSoundcloud, faYoutube } from "@fortawesome/free-brands-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -41,7 +41,7 @@ export default {
   }),
   computed: {
     requesterName() {
-      let user = UserManager.getUser(this.track.requesterId);
+      let user = MemberManager.getMember(this.track.requesterUid);
       if (!user) return "user not found";
       return user.username;
     },

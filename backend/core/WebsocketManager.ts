@@ -7,7 +7,11 @@ export class WebsocketManager {
     roomManager: RoomManager;
 
     constructor(server: http.Server, roomManager: RoomManager) {
-        this.io = new socketio.Server(server);
+        this.io = new socketio.Server(server, {
+            cors: {
+                origin: "*"
+            }
+        });
         this.roomManager = roomManager;
 
         this.io.use(((socket, next) => {
@@ -22,6 +26,7 @@ export class WebsocketManager {
             let room = this.roomManager.getRoomByUid(user.currentRoomUid);
 
             socket.join(room.roomUid);
+            console.log(`socket.join(${room.roomUid});`)
             next();
         }));
     }

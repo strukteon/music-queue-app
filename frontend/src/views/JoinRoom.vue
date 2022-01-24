@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import BackendController from "@/scripts/BackendController";
+import {Room} from "@/scripts/models/Room";
 
 export default {
   name: "JoinRoom",
@@ -18,7 +18,7 @@ export default {
   }),
   methods: {
     async joinRoom() {
-      console.log(await BackendController.joinRoom(this.username, this.joinCode));
+      console.log(await Room.join(this.joinCode.toUpperCase(), this.username));
       this.$router.push({ name: "RoomPage" });
     }
   }

@@ -51,7 +51,7 @@ import { SoundcloudController } from "@/scripts/track-controller/SoundcloudContr
 import { faVolumeMute, faStepForward, faPause, faPlay, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faSoundcloud, faYoutube } from "@fortawesome/free-brands-svg-icons";
 
-import { UserManager } from "@/scripts/room/UserManager";
+import {MemberManager} from "@/scripts/room/MemberManager";
 import { deviceIsMobile } from "@/scripts/Tools";
 
 export default {
@@ -74,6 +74,7 @@ export default {
     youtubeController: null,
     soundcloudController: null,
     track: null,
+    isInitialized: false,
     pauseProgressUpdate: false,
     progress: 0,
     volume: 100,
@@ -87,13 +88,15 @@ export default {
 
   async mounted() {
     this.youtubeController = new YoutubeController("youtube-iframe-wrapper");
-    this.soundcloudController = new SoundcloudController();
+    this.soundcloudController = new SoundcloudController("soundcloud");
+    this.isInitialized = false;
   },
 
   methods: {
     async initControllers() {
       await this.youtubeController.init();
       await this.soundcloudController.init();
+      this.isInitialized = true;
     },
     async loadTrack(track) {
       if (this.activeController !== null) {
@@ -107,9 +110,13 @@ export default {
         this.activeController = this.soundcloudController;
 
       this.track = track;
+      this.activeController.setOnTrackLoaded(() => {
+        console.log("loaded");
+        this.activeController.play();
+        this.isPlaying = true;
+      })
       // this.activeController.setVolume(this.volume);
       this.activeController.load(track.trackId);
-      this.activeController.play();
 
       this.activeController.setOnTrackProgress((position, duration) => {
         this.track.position = position;
@@ -124,7 +131,7 @@ export default {
 
       if (deviceIsMobile()) {
         window.addEventListener("blur", () => {
-          if (this.activeController != null) {
+          if (this.activeController != null && this.isPlaying) {
             setTimeout(() => {
               let pos = this.track.position;
               this.activeController.load(this.track.trackId, pos / 1000);
@@ -202,7 +209,7 @@ export default {
 
     requesterName() {
       console.log("----------", this.track)
-      let user = UserManager.getUser(this.track.requesterId);
+      let user = MemberManager.getMember(this.track.requesterUid);
       if (!user) return "user not found";
       return user.username;
     },
@@ -306,6 +313,13 @@ export default {
             background-color: rgba(black, .1);
           }
 
+          &[disabled] {
+            cursor: default;
+            &:hover {
+              background-color: transparent;
+            }
+          }
+
           &.mute {
             color: lighten(black, 30%);
 
@@ -328,6 +342,11 @@ export default {
 
             &:hover {
               color: darken(white, 20%);
+            }
+
+            &[disabled]:hover {
+              color: white;
+              background-color: black;
             }
           }
         }

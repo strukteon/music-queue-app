@@ -6,6 +6,7 @@ export class Room {
     roomUid: string;
     roomName: string;
     ownerUid: string;
+    joinCode: string;
     roomManager: RoomManager;
     roomMemberManager: RoomMemberManager;
     trackManager: TrackManager;
@@ -21,7 +22,12 @@ export class Room {
         this.roomMemberManager.addMember(ownerUid, true);
     }
 
+    setJoinCode(code: string) {
+        this.joinCode = code;
+    }
+
     emit(ev, ...args) {
+        console.log(ev, args)
         this.roomManager.websocketManager.io.in(this.roomUid).emit(ev, args);
     }
 
@@ -29,7 +35,8 @@ export class Room {
         return {
             roomUid: this.roomUid,
             roomName: this.roomName,
-            ownerUid: this.ownerUid
+            ownerUid: this.ownerUid,
+            joinCode: this.joinCode,
         }
     }
 }

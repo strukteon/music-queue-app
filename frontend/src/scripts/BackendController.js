@@ -1,8 +1,10 @@
 import axios from "axios";
 
 export default class {
-    static url = `${window.location.protocol}//${window.location.hostname}/api`;
+    static domain = `${window.location.protocol}//${window.location.hostname}`;
+    static url = `${this.domain}/api`;
     static websocketUrl = `ws${window.location.protocol === 'https:' ? 's' : ''}://${window.location.hostname}`;
+    static uniqueId;
 
     static setUniqueId(uniqueId) {
         this.uniqueId = uniqueId;
@@ -13,67 +15,12 @@ export default class {
             this.uniqueId = localStorage.getItem("uniqueId");
     }
 
-    static async createRoom(username, roomName) {
+    static async makeRequest(path = "/", additional_data = {}) {
         this.loadUniqueId();
-        console.log(this.uniqueId)
-        alert(`${this.url}/create-room`)
-        return (await axios.post(`${this.url}/create-room`, {
+        console.log(`${this.url}${path}`)
+        return (await axios.post(`${this.url}${path}`, {
             uniqueId: this.uniqueId,
-            username,
-            roomName
-        })).data;
-    }
-
-    static async joinRoom(username, joinCode) {
-        this.loadUniqueId();
-        return (await axios.post(`${this.url}/join-room`, {
-            uniqueId: this.uniqueId,
-            username,
-            joinCode
-        })).data;
-    }
-
-    static async leaveRoom() {
-        this.loadUniqueId();
-        return (await axios.post(`${this.url}/leave-room`, {
-            uniqueId: this.uniqueId
-        })).data;
-    }
-
-    static async getRoomData() {
-        this.loadUniqueId();
-        return (await axios.post(`${this.url}/room`, {
-            uniqueId: this.uniqueId
-        })).data;
-    }
-
-    static async roomAddTrack(trackId, platform) {
-        this.loadUniqueId();
-        return (await axios.post(`${this.url}/room/add-track`, {
-            uniqueId: this.uniqueId,
-            trackId,
-            platform
-        })).data;
-    }
-
-    static async roomNextTrack() {
-        this.loadUniqueId();
-        return (await axios.post(`${this.url}/room/next-track`, {
-            uniqueId: this.uniqueId
-        })).data;
-    }
-
-    static async roomListTracks() {
-        this.loadUniqueId();
-        return (await axios.post(`${this.url}/room/list-tracks`, {
-            uniqueId: this.uniqueId
-        })).data;
-    }
-
-    static async getUser(userId = "@me") {
-        this.loadUniqueId();
-        return (await axios.post(`${this.url}/users/${userId}`, {
-            uniqueId: this.uniqueId
+            ...additional_data
         })).data;
     }
 }

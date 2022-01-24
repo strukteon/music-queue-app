@@ -1,58 +1,67 @@
+import { io } from "socket.io-client";
 import BackendController from "@/scripts/BackendController";
-import {getPlatformClass} from "@/scripts/room/RoomHelper";
 import {TrackManager} from "@/scripts/room/TrackManager";
-import {UserManager} from "@/scripts/room/UserManager";
+import {MemberManager} from "@/scripts/room/MemberManager";
 
-export default class {
-    vue = null;
+export class RoomWebsocketHandler {
+    socket;
+    vue;
 
-    constructor(vue) {
-        this.vue = vue;
-        this.ws = new WebSocket(BackendController.websocketUrl);
-
-        this.ws.addEventListener("open", () => {
-            this.sendAuthenticationMessage();
+    constructor(roomVueObject) {
+        this.vue = roomVueObject;
+        BackendController.loadUniqueId()
+        this.socket = io(BackendController.domain, {
+            auth: {
+                token: BackendController.uniqueId
+            }
         });
 
-        this.ws.addEventListener("message", event => {
-            const message = JSON.parse(event.data);
-            this.handleWebsocketMessage(message);
-        })
+        this.socket.on("connect_error", x => {
+            console.log("couldnt connect to socket:", x);
+        });
+
+        this.socket.on("connect", x => {
+            console.log("connected:", x);
+        });
+
+        this.registerUserEvents();
     }
 
-    sendAuthenticationMessage() {
-        BackendController.loadUniqueId();
+    registerUserEvents() {
+        this.socket.on("data", x => {
+            console.log("data:", x);
+        });
+        this.socket.on("USER_JOINED", async data => {
+            await MemberManager.loadMember(data[0]);
+            this.vue.roomMembers = MemberManager.getAllMembers();
+        });
+        this.socket.on("USER_LEFT", async data => {
+            await MemberManager.removeMember(data[0]);
+            this.vue.roomMembers = MemberManager.getAllMembers();
+        });
+        this.socket.on("TRACK_ADDED", async data => {
+            await TrackManager.addQueuedTrack(TrackManager.createTrackObject(data[0]));
+            this.vue.queuedTracks = TrackManager.getQueuedTracks();
+        });
+        /*eslint-disable*/
+        this.socket.on("NEXT_TRACK_STARTED", async () => {
+            TrackManager.pullNextTrack();
+            this.vue.queuedTracks = [...TrackManager.getQueuedTracks()];
+            this.vue.currentTrack = TrackManager.getCurrentTrack();
 
-        this.ws.send(JSON.stringify({
-            uniqueId: BackendController.uniqueId,
-        }));
+            if (!this.vue.$refs["track-controller"].isInitialized)
+                await this.vue.$refs["track-controller"].loadTrack(this.vue.currentTrack);
+        });
+        this.socket.on("TRACKS_REMOVED", async data => {
+        });
+        this.socket.on("TRACKS_REMOVED_BY_MEMBER_UID", async data => {
+        });
+        this.socket.on("UPDATED_TRACK_INDEX", async data => {
+        });
+        /*eslint-ensable*/
     }
 
-    async handleWebsocketMessage(msg) {
-        if (msg.message === "updated_track_list") {
-            let response = await BackendController.roomListTracks();
-            await TrackManager.loadTracks(response.data.queuedTracks.map(v => TrackManager.createTrackObject(v.trackId, v.platform, v.userId)));
-            this.vue.queuedTracks = TrackManager.getTracks();
-        } else if (msg.message === "user_joined") {
-            await UserManager.loadUser(msg.data);
-            this.vue.roomMembers = UserManager.getAllUsers();
-        } else if (msg.message === "user_left") {
-            await UserManager.removeUser(msg.data);
-            this.vue.roomMembers = UserManager.getAllUsers();
-        } else if (msg.message === "next_track_started") {
-            let response = await BackendController.roomListTracks();
-            this.vue.roomData.currentTrack = response.data.currentTrack;
-            if (this.vue.roomData.currentTrack != null) {
-                let trackClass = getPlatformClass(this.vue.roomData.currentTrack.platform);
-                let track = new trackClass(this.vue.roomData.currentTrack.trackId);
-                await track.loadMetadata();
-                await this.vue.$refs["track-controller"].loadTrack(track);
-                this.vue.$refs["track-controller"].activeController.play();
-            }
+    registerTrackEvents() {
 
-            await TrackManager.loadTracks(response.data.queuedTracks.map(v => TrackManager.createTrackObject(v.trackId, v.platform, v.userId)));
-            this.vue.queuedTracks = TrackManager.getTracks();
-        }
     }
-
 }

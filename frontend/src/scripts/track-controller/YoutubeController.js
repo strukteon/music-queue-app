@@ -22,6 +22,8 @@ export class YoutubeController extends Controller {
                         'onStateChange': event => {
                             if(event.data === 0) {
                                 this.onTrackEnd(); // fired when video ends
+                            } else if (event.data === -1) {
+                                this.onTrackLoaded();
                             }
                         }
                     }

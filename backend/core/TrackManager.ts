@@ -26,6 +26,8 @@ export class TrackManager {
     }
 
     pullTrackFromQueue() {
+        if (this.queuedTracks.length === 0) return;
+
         this.currentTrack = this.queuedTracks.shift();
         this.room.emit("NEXT_TRACK_STARTED", this.currentTrack);
     }

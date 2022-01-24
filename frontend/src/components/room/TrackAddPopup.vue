@@ -39,7 +39,7 @@
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { faYoutube, faSoundcloud } from "@fortawesome/free-brands-svg-icons";
 import { TrackManager } from "@/scripts/room/TrackManager";
-import BackendController from "@/scripts/BackendController";
+import {Room} from "@/scripts/models/Room";
 
 export default {
   name: "TrackAddPopup",
@@ -95,7 +95,7 @@ export default {
         return;
       }
 
-      let track = TrackManager.createTrackObject(trackId, platform);
+      let track = TrackManager.createTrackObject({trackId, platform});
       try {
         await track.loadMetadata();
       } catch (e) {
@@ -124,7 +124,7 @@ export default {
       this.addTrackButtonText = "Add another track";
       this.trackInfoText = "This track was added:";
       this.trackUrl = "";
-      await BackendController.roomAddTrack(this.track.trackId, this.track.platform);
+      await Room.Tracks.add({ trackId: this.track.trackId, platform: this.track.platform });
     }
   }
 }

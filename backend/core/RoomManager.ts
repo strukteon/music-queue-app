@@ -21,6 +21,8 @@ export class RoomManager {
         let room = new Room(this, roomName, userUid);
         this.userManager.getUserByUid(userUid).setRoomUid(room.roomUid);
         this.rooms.push(room);
+        let joinCode = this.joinCodeManager.generateJoinCode(room.roomUid);
+        room.setJoinCode(joinCode);
         return room;
     }
 
