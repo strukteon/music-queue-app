@@ -1,6 +1,8 @@
 <template>
-  <navigation-bar/>
-  <router-view class="router-view"/>
+  <div class="body-wrapper">
+    <navigation-bar/>
+    <router-view class="router-view"/>
+  </div>
 </template>
 
 <script>
@@ -16,15 +18,27 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+@use "~@/assets/styles/colors.scss";
+
 html, body {
   margin: 0;
   font-family: "Poppins", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: colors.$darkblue;
+  color: white;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.body-wrapper {
+  max-width: 1440px;
+  width: 100vw;
 }
 
 .router-view {
-  padding-top: 2rem;
 }
 </style>

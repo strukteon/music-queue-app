@@ -17,10 +17,12 @@ export default {
 nav {
   display: flex;
   height: 60px;
-  width: 100%;
+  width: calc(100% - 16px);
   background-color: #3d74bd;
-  position: fixed;
   top: 0;
+  border-radius: 16px;
+  margin: 8px;
+  position: relative;
   z-index: 100;
 
   .logo {
@@ -28,10 +30,11 @@ nav {
     display: flex;
     width: 10rem;
     justify-content: center;
+    align-items: center;
 
     img {
       display: block;
-      height: 100%;
+      height: 80%;
       width: auto;
     }
   }
@@ -43,9 +46,10 @@ nav {
     > * {
       text-decoration: none;
       color: white;
-      font-size: 1.25rem;
+      font-size: 1.5rem;
       padding: .5rem;
       margin: .3rem;
+      font-weight: 500;
 
       &:hover {
         background-color: #293043;
