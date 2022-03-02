@@ -36,7 +36,7 @@ export default {
     line-height: 1.25rem;
     padding-top: .5rem;
     font-weight: 700;
-    color: black;
+    color: #F5F7F3;
     text-align: center;
   }
 
@@ -47,7 +47,7 @@ export default {
     align-items: center;
     font-weight: 600;
     font-size: 1.25rem;
-    color: lighten(black, 30%);
+    color: darken(white, 30%);
 
     .code {
       font-size: 1.5rem;
@@ -65,9 +65,10 @@ export default {
       font-size: 1rem;
       margin-left: .5rem;
       cursor: pointer;
+      color: darken(white, 30%);
 
       &:hover {
-        background-color: rgba(black, .1);
+        background-color: rgba(white, .1);
       }
     }
   }

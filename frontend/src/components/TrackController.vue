@@ -222,7 +222,6 @@ export default {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: center;
     column-gap: 1rem;
 
     .track-img-wrapper {
@@ -443,6 +442,9 @@ export default {
     }
 
     .iframes {
+      position: absolute;
+      top: 0;
+      left: 0;
     }
   }
 </style>

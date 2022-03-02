@@ -1,18 +1,34 @@
 <template>
-  <div class="create-room-wrapper">
-    <h2>Create a room</h2>
-    <input type="text" placeholder="Username" v-model="username"><br>
-    <input type="text" placeholder="Room name" v-model="roomName"><br>
-    <button @click="createRoom">Create room</button>
+  <div class="create-room">
+    <div class="create-room-wrapper">
+      <button class="action-button" disabled>Settings <font-awesome-icon class="icon" :icon="faCog"/></button>
+      <div class="middle-part">
+        <div class="input-wrapper">
+          <label for="input-username">Username</label>
+          <input id="input-username" type="text" v-model="username">
+        </div>
+        <div class="input-wrapper">
+          <label for="input-room-name">Room Name</label>
+          <input id="input-room-name" type="text" v-model="roomName">
+        </div>
+        <button class="button-submit" @click="createRoom">Click to create</button>
+      </div>
+      <div class="title-wrapper">
+        <h2 class="verb">Create</h2>
+        <h2 class="title-rest">a room</h2>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import {Room} from "@/scripts/models/Room";
+import {faCog} from "@fortawesome/free-solid-svg-icons";
 
 export default {
   name: "CreateRoomPage",
   data: () => ({
+    faCog,
     username: "",
     roomName: ""
   }),
@@ -31,42 +47,123 @@ export default {
 </script>
 
 <style lang="scss">
-  .create-room-wrapper {
+@use "~@/assets/styles/colors.scss";
+
+.create-room {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.create-room-wrapper {
+  display: flex;
+
+  .title-wrapper {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    align-items: start;
+    justify-content: end;
+    width:  200px;
+    height: 200px;
+    transform: rotateZ(90deg);
+    margin: 1rem;
 
-    input {
-      outline: none;
-      font-family: "Poppins", Helvetica, Arial, sans-serif;
-      background-color: white;
-      border: 1px lightgray solid;
-      transition: border-color .2s ease;
-      border-radius: 8px;
-      padding: .25rem .25rem;
-      width: 14rem;
-      color: lighten(black, 10%);
-      margin: .25rem;
-
-      &:focus {
-        border-color: gray;
-      }
+    > * {
+      margin: 0;
+      font-size: 3rem;
+      line-height: 2.5rem;
+      font-weight: 700;
     }
-
-    button {
-      font-family: 'Poppins', sans-serif;
-      border: 1px transparent solid;
-      border-radius: 999px;
-      margin: .25rem;
-      font-size: 1rem;
-      padding: .5rem 1rem;
-      cursor: pointer;
-      transition: background-color .2s ease;
-
-      &[disabled] {
-        cursor: unset;
-      }
+    .title-rest {
+      background: -webkit-linear-gradient(0deg, rgba(white, .8), rgba(white, .5));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
   }
+
+  .input-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    margin-bottom: 1.5rem;
+
+    label {
+      padding-right: .5rem;
+      font-size: .9rem;
+      margin-bottom: .25rem;
+    }
+
+    input {
+      border-radius: 999px;
+      border-color: transparent;
+      font-family: "Poppins", Helvetica, Arial, sans-serif;
+
+      width: 12rem;
+
+      padding: .125rem .5rem
+    }
+  }
+
+  .middle-part {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
+    align-items: start;
+    margin: 0 1rem;
+  }
+
+  .button-submit {
+    border-color: transparent;
+    border-radius: 999px;
+    font-family: "Poppins", Helvetica, Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    font-style: italic;
+    color: white;
+    padding: .25rem 1.5rem;
+    background-color: colors.$blue;
+    cursor: pointer;
+    transition: background-color .2s ease;
+
+    &:hover {
+      background-color: darken(colors.$blue, 20%);
+    }
+  }
+
+  .action-button {
+    background-color: colors.$red;
+    border-color: transparent;
+    border-radius: 16px;
+    font-family: "Poppins", Helvetica, Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    font-style: italic;
+    color: white;
+    width: 100px;
+    height: 100px;
+    padding: .5rem;
+
+    margin: 2rem;
+
+    cursor: pointer;
+    transition: background-color .2s ease;
+
+    &:hover {
+      background-color: darken(colors.$red, 20%);
+    }
+
+    .icon {
+      font-size: 3rem;
+      padding: .2rem;
+    }
+
+    &:disabled {
+      cursor: default;
+      pointer-events: none;
+      background-color: transparentize(colors.$red, .4);
+      color: transparentize(white, .4);
+    }
+  }
+}
 </style>

@@ -47,12 +47,12 @@ nav {
       text-decoration: none;
       color: white;
       font-size: 1.5rem;
-      padding: .5rem;
-      margin: .3rem;
+      padding: .8rem;
       font-weight: 500;
+      transition: background-color .2s ease;
 
       &:hover {
-        background-color: #293043;
+        background-color: rgba(black, .1);
       }
     }
   }

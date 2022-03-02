@@ -20,10 +20,6 @@ const routes = [
     name: "RoomPage",
     component: () => import("@/views/RoomPage")
   },
-  {
-    path: "/dj-test-screen",
-    component: () => import("@/views/RoomDjScreen")
-  }
 ]
 
 const router = createRouter({

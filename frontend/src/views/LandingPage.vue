@@ -160,7 +160,7 @@ export default {
       align-items: center;
       position: relative;
 
-      margin: 2rem 0;
+      margin: 4rem 0;
 
       &::before {
         z-index: -1;
@@ -296,6 +296,8 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
+
+      margin: 10rem 0;
 
 
       .right {

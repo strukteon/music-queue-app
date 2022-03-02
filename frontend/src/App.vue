@@ -32,6 +32,15 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  min-height: 100vh;
+  flex-grow: 1;
+}
+#app {
+  display: flex;
+}
+#app, .body-wrapper {
+  flex-grow: 1;
 }
 
 .body-wrapper {

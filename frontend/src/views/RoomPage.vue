@@ -9,7 +9,9 @@
       <div class="party-members-section">
         <p class="title">Party Members <font-awesome-icon :icon="fa.faUsers"/></p>
 
-        <p class="member" v-for="member in roomMembers" :key="member.userId"><font-awesome-icon :icon="fa.faUser"/> {{ member.username }}</p>
+        <div class="member-wrapper">
+          <p class="member" v-for="member in roomMembers" :key="member.userId"><font-awesome-icon :icon="fa.faUser"/> {{ member.username }}</p>
+        </div>
       </div>
     </div>
 
@@ -38,7 +40,6 @@ import TrackController from "@/components/TrackController";
 import JoinCode from "@/components/room/JoinCode";
 
 import { faUsers, faUser } from "@fortawesome/free-solid-svg-icons";
-// import {UserManager} from "@/scripts/room/UserManager";
 import {TrackManager} from "@/scripts/room/TrackManager";
 import QueuedTrack from "@/components/room/QueuedTrack";
 import TrackAddPopup from "@/components/room/TrackAddPopup";
@@ -138,6 +139,11 @@ export default {
 <style lang="scss">
 @use "~@/assets/styles/colors.scss";
 
+body {
+  background-size: cover;
+  background-position: center;
+  background-image: url("~@/assets/images/image 11.png");
+}
 
 .room-page {
   display: flex;
@@ -158,7 +164,7 @@ export default {
     .welcome-text {
       font-size: 2rem;
       font-weight: 600;
-      color: black;
+      color: #F5F7F3;
       margin: 0;
       flex-grow: 1;
       text-align: center;
@@ -172,6 +178,9 @@ export default {
   .track-controller {
     margin-top: 2rem;
     margin-bottom: 2rem;
+    background-color: darken(white, 5%);
+    border-radius: 24px;
+    padding: 24px;
   }
 
   .party-members-section {
@@ -181,7 +190,7 @@ export default {
       align-items: center;
       font-size: 1.5rem;
       font-weight: 600;
-      color: black;
+      color: darken(white, 10%);
 
       svg {
         margin-left: .5rem;
@@ -192,6 +201,9 @@ export default {
     .member-wrapper {
       display: flex;
       flex-wrap: wrap;
+      border-radius: 24px;
+      background-color: darken(white, 5%);
+      padding: 12px;
     }
 
     .member {
@@ -215,7 +227,6 @@ export default {
     font-family: "Poppins", sans-serif;
     border: 1px transparent solid;
     border-radius: 999px;
-    margin: 0.25rem;
     font-size: 1rem;
     padding: 0.5rem 1rem;
     cursor: pointer;
@@ -236,7 +247,7 @@ export default {
 
     .title {
       font-weight: 700;
-      color: black;
+      color: darken(white, 5%);
       font-size: 1.5rem;
       margin: 0;
       margin-bottom: 1rem;
