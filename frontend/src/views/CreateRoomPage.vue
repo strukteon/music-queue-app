@@ -1,7 +1,8 @@
 <template>
   <div class="create-room">
     <div class="create-room-wrapper">
-      <button class="action-button" disabled>Settings <font-awesome-icon class="icon" :icon="faCog"/></button>
+      <settings-modal ref="settingsModal"/>
+      <button class="action-button" @click="$refs['settingsModal'].open()">Settings <font-awesome-icon class="icon" :icon="faCog"/></button>
       <div class="middle-part">
         <div class="input-wrapper">
           <label for="input-username">Username</label>
@@ -24,9 +25,11 @@
 <script>
 import {Room} from "@/scripts/models/Room";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
+import SettingsModal from "../components/create-room/SettingsModal";
 
 export default {
   name: "CreateRoomPage",
+  components: {SettingsModal},
   data: () => ({
     faCog,
     username: "",
