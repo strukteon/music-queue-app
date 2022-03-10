@@ -467,7 +467,7 @@ export default {
     padding-top: 28rem;
     padding-bottom: 20rem;
 
-    width: 100%;
+    width: 1440px;
     background-size: cover;
     background-image: url("~@/assets/images/circle-scatter-haikei.svg");
 

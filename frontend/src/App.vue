@@ -34,18 +34,19 @@ html, body {
   align-items: center;
 
   min-height: 100vh;
+  width: 100%;
   flex-grow: 1;
 }
 #app {
   display: flex;
+  width: 100%;
 }
 #app, .body-wrapper {
   flex-grow: 1;
 }
 
 .body-wrapper {
-  max-width: 1440px;
-  width: 100vw;
+  width: 100%;
 }
 
 .router-view {

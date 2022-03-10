@@ -5,12 +5,17 @@
         <p class="welcome-text">Welcome to <span class="room-name">{{ room.roomName }}</span>!</p>
         <join-code :join-code="room.joinCode"/>
       </div>
-      <track-controller class="track-controller" ref="track-controller" @next="Room.Tracks.next()"/>
+      <track-controller v-show="false" class="track-controller" ref="track-controller" @next="Room.Tracks.next()"/>
+      <blank-track-controller/>
       <div class="party-members-section">
         <p class="title">Party Members <font-awesome-icon :icon="fa.faUsers"/></p>
 
         <div class="member-wrapper">
-          <p class="member" v-for="member in roomMembers" :key="member.userId"><font-awesome-icon :icon="fa.faUser"/> {{ member.username }}</p>
+          <blank-party-member/>
+          <blank-party-member/>
+          <blank-party-member/>
+          <blank-party-member/>
+          <party-member v-show="false" class="member" v-for="member in roomMembers" :key="member.userId" :member="member"/>
         </div>
       </div>
     </div>
@@ -25,7 +30,10 @@
         <p class="title">Next up</p>
         <div class="queued-tracks">
           <blank-queued-track v-if="true"/>
-          <queued-track v-for="(track, i) in queuedTracks" :key="track.trackId + i" :track="track"/>
+          <blank-queued-track v-if="true"/>
+          <blank-queued-track v-if="true"/>
+          <blank-queued-track v-if="true"/>
+          <queued-track v-show="false" v-for="(track, i) in queuedTracks" :key="track.trackId + i" :track="track"/>
         </div>
       </div>
     </div>
@@ -46,12 +54,17 @@ import BlankQueuedTrack from "@/components/blank/BlankQueuedTrack";
 
 import {Room} from "@/scripts/models/Room";
 import TrackAddModal from "@/components/room/TrackAddModal";
+import PartyMember from "@/components/blank/PartyMember";
+import BlankPartyMember from "@/components/blank/BlankPartyMember";
+import BlankTrackController from "@/components/blank/BlankTrackController";
 
 const {MemberManager} = require("@/scripts/room/MemberManager");
 
 export default {
   name: "RoomPage",
-  components: {TrackAddModal, BlankQueuedTrack, QueuedTrack, JoinCode, TrackController},
+  components: {
+    BlankTrackController,
+    BlankPartyMember, PartyMember, TrackAddModal, BlankQueuedTrack, QueuedTrack, JoinCode, TrackController},
   data: () => ({
     fa: {
       faUsers,
@@ -204,16 +217,6 @@ body {
       border-radius: 24px;
       background-color: darken(white, 5%);
       padding: 12px;
-    }
-
-    .member {
-      margin: .5rem;
-      color: lighten(black, 50%);
-      font-style: italic;
-
-      svg {
-        color: lighten(black, 70%);
-      }
     }
   }
 
