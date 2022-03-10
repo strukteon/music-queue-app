@@ -35,6 +35,9 @@ export default {
     username: "",
     roomName: ""
   }),
+  mounted() {
+    this.$refs['settingsModal'].open()
+    },
   methods: {
     async createRoom() {
       let res = await Room.create(this.roomName, this.username);

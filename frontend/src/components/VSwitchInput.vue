@@ -1,6 +1,6 @@
 <template>
   <label class="custom-input custom-input-switch">
-    <input type="checkbox" v-model="inputValue">
+    <input type="checkbox" :checked="value">
     <span class="slider-wrapper">
       <span class="slider-button"/>
     </span>
@@ -14,33 +14,31 @@ export default {
   props: {
     value: Boolean,
   },
-  data: () => ({
-    inputValue: false,
-  }),
-  mounted() {
-    this.inputValue = this.value;
-  }
 }
 </script>
 
 <style lang="scss">
 .custom-input.custom-input-switch {
 
+  display: flex;
+  align-items: center;
+
   input {
-    opacity: 0;
+    display: none;
     width: 0;
     height: 0;
   }
 
   .slider-wrapper {
     position: relative;
-    display: inline-block;
+    display: block;
     width: 2.5rem;
     height: 1.25rem;
     border-radius: 999px;
     overflow: hidden;
     background-color: grey;
     transition: background-color .2s ease;
+    margin: .2rem .5rem;
 
     cursor: pointer;
 
@@ -59,7 +57,7 @@ export default {
   }
 
   input:checked + .slider-wrapper {
-    background-color: greenyellow;
+    background-color: #3d74bd;
 
     .slider-button {
       transform: translateX(100%);

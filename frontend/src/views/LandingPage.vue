@@ -1,5 +1,10 @@
 <template>
   <div class="landing-page">
+    <modal ref="inDevModal" title="Still in development">
+      <p>Since this app is still in development, there may occur some bugs.</p>
+      <p>Thank you for using musiQ!</p>
+    </modal>
+
     <section class="starting-screen">
       <div class="title-wrapper">
         <h1 class="title">Listening to music yet?</h1>
@@ -31,7 +36,7 @@
             platforms, collected in a single webapp!</p>
         </div>
         <div class="img-wrapper listen-alone">
-          <img src="@/assets/images/listen_alone.svg"/>
+          <img src="@/assets/images/landing_page/listen_alone.svg"/>
         </div>
       </div>
 
@@ -42,7 +47,7 @@
             Doesn’t matter anymore! Add songs to the queue and the host will play them - one after another.</p>
         </div>
         <div class="img-wrapper listen-gathering">
-          <img src="@/assets/images/listen_gathering.svg"/>
+          <img src="@/assets/images/landing_page/listen_gathering.svg"/>
         </div>
       </div>
 
@@ -53,7 +58,7 @@
             other!</p>
         </div>
         <div class="img-wrapper listen-together">
-          <img src="@/assets/images/listen_together.svg"/>
+          <img src="@/assets/images/landing_page/listen_together.svg"/>
         </div>
       </div>
     </section>
@@ -110,9 +115,11 @@
 <script>
 import {faAngleDown, faCheckCircle, faTimesCircle, faHandHoldingHeart} from "@fortawesome/free-solid-svg-icons";
 import {faYoutube, faSpotify, faSoundcloud} from "@fortawesome/free-brands-svg-icons";
+import Modal from "@/components/Modal";
 
 export default {
   name: "LandingPage",
+  components: {Modal},
   data: () => ({
     faAngleDown,
     faCheckCircle,
@@ -130,6 +137,10 @@ export default {
       {text: "Is 100% legal", yt: true, sp: true, sc: true, mq: true},
     ]
   }),
+  mounted() {
+    if (window.location.hostname != 'localhost')
+      this.$refs.inDevModal.open();
+  },
   methods: {
     startVideo(event) {
       event.target.firstChild.play();
@@ -168,9 +179,9 @@ export default {
         position: absolute;
         width: 100%;
         top: -325px;
-        height: 600px;
+        height: 530px;
         background-position: bottom;
-        background-image: url("~@/assets/images/image 13.svg");
+        background-image: url("~@/assets/images/landing_page/haikei_image_13.svg");
       }
 
       .title {
@@ -226,7 +237,10 @@ export default {
           background-color: rgba(#3D74BD, .5);
 
           &::after {
-            background-image: url("~@/assets/images/blob-haikei 2.png");
+            background-image: url("~@/assets/images/landing_page/haikei_blob_2.svg");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: right;
           }
         }
 
@@ -234,8 +248,10 @@ export default {
           background-color: rgba(#AD3F59, .65);
 
           &::after {
-            width: 70%;
-            background-image: url("~@/assets/images/blob-haikei 1.png");
+            background-image: url("~@/assets/images/landing_page/haikei_blob_1.svg");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: left;
           }
         }
 
@@ -277,11 +293,11 @@ export default {
         content: '';
         position: absolute;
         width: 100%;
-        top: -450px;
-        height: 600px;
+        top: -240px;
+        height: 400px;
         background-position: bottom;
         background-repeat: no-repeat;
-        background-image: url("~@/assets/images/image 12.png");
+        background-image: url("~@/assets/images/landing_page/haikei_image_12.svg");
       }
 
       svg.icon {
@@ -340,8 +356,9 @@ export default {
 
         &.listen-alone::before {
           top: -120px;
-          left: -70px;
-          background-image: url("~@/assets/images/image 16.png");
+          left: -60px;
+          width: 115%;
+          background-image: url("~@/assets/images/landing_page/haikei_image_16.svg");
         }
 
         &.listen-gathering::before {

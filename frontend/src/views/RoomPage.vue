@@ -17,8 +17,8 @@
 
     <div class="right-part">
       <div class="add-track-button-wrapper">
-        <button class="add-track-button" @click="addTrackOpen = true">Add Track</button>
-        <track-add-popup v-model="addTrackOpen"/>
+        <button class="add-track-button" @click="$refs.trackAddModal.open()">Add Track</button>
+        <track-add-modal ref="trackAddModal"/>
       </div>
 
       <div class="queued-tracks-section">
@@ -42,16 +42,16 @@ import JoinCode from "@/components/room/JoinCode";
 import { faUsers, faUser } from "@fortawesome/free-solid-svg-icons";
 import {TrackManager} from "@/scripts/room/TrackManager";
 import QueuedTrack from "@/components/room/QueuedTrack";
-import TrackAddPopup from "@/components/room/TrackAddPopup";
 import BlankQueuedTrack from "@/components/blank/BlankQueuedTrack";
 
 import {Room} from "@/scripts/models/Room";
+import TrackAddModal from "@/components/room/TrackAddModal";
 
 const {MemberManager} = require("@/scripts/room/MemberManager");
 
 export default {
   name: "RoomPage",
-  components: {BlankQueuedTrack, TrackAddPopup, QueuedTrack, JoinCode, TrackController},
+  components: {TrackAddModal, BlankQueuedTrack, QueuedTrack, JoinCode, TrackController},
   data: () => ({
     fa: {
       faUsers,

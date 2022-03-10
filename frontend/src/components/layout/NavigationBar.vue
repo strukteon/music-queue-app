@@ -1,6 +1,9 @@
 <template>
   <nav>
-    <router-link to="/" class="logo"><img src="@/assets/images/musiq_logo_v2.svg"/></router-link>
+    <router-link to="/" class="logo">
+      <img src="@/assets/images/logo_white.svg"/>
+      <span class="text">MusiQ</span>
+    </router-link>
     <div class="nav-links">
       <router-link to="/">Home</router-link>
     </div>
@@ -32,10 +35,20 @@ nav {
     justify-content: center;
     align-items: center;
 
+    text-decoration: none;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-style: italic;
+
     img {
       display: block;
-      height: 80%;
+      height: 60%;
       width: auto;
+    }
+
+    .text {
+      margin-left: .25rem;
     }
   }
 
