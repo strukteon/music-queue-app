@@ -20,15 +20,20 @@
             <party-member v-for="member in roomMembers" :key="member.userId" :member="member"/>
           </template>
           <template v-else>
-            <blank-party-member v-for="i in 5" :key="i"/>
+            <blank-party-member v-for="i in 15" :key="i"/>
           </template>
         </div>
+      </div>
+
+      <div class="qr-code-wrapper">
+        <vue-button @click="showQrCode = ! showQrCode">{{ showQrCode ? 'Hide' : 'Show'}} QR-Code</vue-button>
+        <qr-code v-show="showQrCode" :value="qrcodeValue"/>
       </div>
     </div>
 
     <div class="right-part">
       <div class="add-track-button-wrapper">
-        <button class="add-track-button" @click="$refs.trackAddModal.open()">Add Track</button>
+        <vue-button class="add-track-button" @click="$refs.trackAddModal.open()">Add Track</vue-button>
         <track-add-modal ref="trackAddModal"/>
       </div>
 
@@ -65,12 +70,16 @@ import TrackAddModal from "@/components/room/TrackAddModal";
 import PartyMember from "@/components/blank/PartyMember";
 import BlankPartyMember from "@/components/blank/BlankPartyMember";
 import BlankTrackController from "@/components/blank/BlankTrackController";
+import VueButton from "@/components/VueButton";
+import QrCode from "@/components/room/QrCode";
 
 const {MemberManager} = require("@/scripts/room/MemberManager");
 
 export default {
   name: "RoomPage",
   components: {
+    QrCode,
+    VueButton,
     BlankTrackController,
     BlankPartyMember, PartyMember, TrackAddModal, BlankQueuedTrack, QueuedTrack, JoinCode, TrackController
   },
@@ -88,6 +97,7 @@ export default {
     currentTrack: null,
     queuedTracks: null,
     websocketHandler: null,
+    showQrCode: true,
   }),
   async beforeCreate() {
     BackendController.loadUniqueId();
@@ -154,6 +164,12 @@ export default {
   },*/
 
   methods: {},
+
+  computed: {
+    qrcodeValue() {
+      return `https://musiq.pq/join/${this.room.joinCode}`;
+    }
+  }
 }
 </script>
 
@@ -222,6 +238,7 @@ body {
     .member-wrapper {
       display: flex;
       flex-wrap: wrap;
+      justify-content: center;
       border-radius: 24px;
       background-color: darken(white, 5%);
       padding: 12px;
@@ -230,25 +247,6 @@ body {
 
   .add-track-button-wrapper {
     display: flex;
-  }
-
-  .add-track-button {
-    display: block;
-    flex-grow: 1;
-    font-family: "Poppins", sans-serif;
-    border: 1px transparent solid;
-    border-radius: 999px;
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    background-color: lighten(black, 40%);
-    color: white;
-    margin: .5rem;
-
-    &:hover {
-      background-color: lighten(black, 20%);
-    }
   }
 
   .queued-tracks-section {
@@ -269,12 +267,33 @@ body {
     }
   }
 
+  .qr-code-wrapper {
+    @media screen and (min-width: 1600px + 316) {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: start;
+      position: absolute;
+      padding: 16px;
+      bottom: 0px;
+      left: 0px;
+
+      .btn {
+        margin: 1rem 0 0 0;
+      }
+
+      img {
+        width: min(300px, calc(calc(100vw - 1600px) / 2 - 16px));
+      }
+    }
+  }
+
   .left-part, .right-part {
     margin: 0 2rem;
   }
 
   .left-part {
     flex-grow: 1;
+    max-width: 992px;
   }
 }
 </style>

@@ -16,16 +16,24 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .btn {
-  font-family: 'Encode Sans';
-  font-size: 1.1rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  color: white;
-  background-color: dodgerblue;
+  display: block;
+  flex-grow: 1;
+  font-family: "Poppins", sans-serif;
   border: 1px transparent solid;
-  padding: 8px;
+  border-radius: 999px;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  background-color: lighten(black, 40%);
+  color: white;
+  margin: .5rem;
+
+  &:hover {
+    background-color: lighten(black, 20%);
+  }
 }
 
 </style>
