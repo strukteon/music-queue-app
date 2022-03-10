@@ -14,6 +14,7 @@ export default {
 
 <style lang="scss" scoped>
 .member {
+  height: 25px;
 
   .username {
     display: inline-block;

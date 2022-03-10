@@ -5,17 +5,23 @@
         <p class="welcome-text">Welcome to <span class="room-name">{{ room.roomName }}</span>!</p>
         <join-code :join-code="room.joinCode"/>
       </div>
-      <track-controller v-show="false" class="track-controller" ref="track-controller" @next="Room.Tracks.next()"/>
-      <blank-track-controller/>
+
+
+      <track-controller v-show="/*trackHasLoaded*/ false" ref="track-controller" @next="Room.Tracks.next()"/>
+      <blank-track-controller v-if="true"/>
+
       <div class="party-members-section">
-        <p class="title">Party Members <font-awesome-icon :icon="fa.faUsers"/></p>
+        <p class="title">Party Members
+          <font-awesome-icon :icon="fa.faUsers"/>
+        </p>
 
         <div class="member-wrapper">
-          <blank-party-member/>
-          <blank-party-member/>
-          <blank-party-member/>
-          <blank-party-member/>
-          <party-member v-show="false" class="member" v-for="member in roomMembers" :key="member.userId" :member="member"/>
+          <template v-if="/*usersHaveLoaded*/ roomMembers != null">
+            <party-member v-for="member in roomMembers" :key="member.userId" :member="member"/>
+          </template>
+          <template v-else>
+            <blank-party-member v-for="i in 5" :key="i"/>
+          </template>
         </div>
       </div>
     </div>
@@ -29,11 +35,13 @@
       <div class="queued-tracks-section">
         <p class="title">Next up</p>
         <div class="queued-tracks">
-          <blank-queued-track v-if="true"/>
-          <blank-queued-track v-if="true"/>
-          <blank-queued-track v-if="true"/>
-          <blank-queued-track v-if="true"/>
-          <queued-track v-show="false" v-for="(track, i) in queuedTracks" :key="track.trackId + i" :track="track"/>
+          <template v-if="queuedTracks == null">
+            <blank-queued-track v-for="i in 4" :key="i"/>
+          </template>
+          <template v-else-if="/*queuedTracksHaveLoaded*/ queuedTracks.length > 0">
+            <queued-track v-for="(track, i) in queuedTracks" :key="track.trackId + i" :track="track"/>
+          </template>
+          <p v-else>No tracks queued!</p>
         </div>
       </div>
     </div>
@@ -47,7 +55,7 @@ import TrackController from "@/components/TrackController";
 
 import JoinCode from "@/components/room/JoinCode";
 
-import { faUsers, faUser } from "@fortawesome/free-solid-svg-icons";
+import {faUsers, faUser} from "@fortawesome/free-solid-svg-icons";
 import {TrackManager} from "@/scripts/room/TrackManager";
 import QueuedTrack from "@/components/room/QueuedTrack";
 import BlankQueuedTrack from "@/components/blank/BlankQueuedTrack";
@@ -64,7 +72,8 @@ export default {
   name: "RoomPage",
   components: {
     BlankTrackController,
-    BlankPartyMember, PartyMember, TrackAddModal, BlankQueuedTrack, QueuedTrack, JoinCode, TrackController},
+    BlankPartyMember, PartyMember, TrackAddModal, BlankQueuedTrack, QueuedTrack, JoinCode, TrackController
+  },
   data: () => ({
     fa: {
       faUsers,
@@ -73,11 +82,11 @@ export default {
     addTrackOpen: false,
     BackendController,
     Room,
-    room: { },
-    roomMembers: [],
+    room: {},
+    roomMembers: null,
     TrackManager,
     currentTrack: null,
-    queuedTracks: [],
+    queuedTracks: null,
     websocketHandler: null,
   }),
   async beforeCreate() {
@@ -85,7 +94,7 @@ export default {
     console.log(BackendController.uniqueId)
 
     let room = await Room.getCurrent();
-    if (! room) alert("Error: not in room");
+    if (!room) alert("Error: not in room");
     this.room = room;
 
     console.log(Room.Tracks)
@@ -96,7 +105,7 @@ export default {
     this.currentTrack = TrackManager.getCurrentTrack();
     this.queuedTracks = TrackManager.getQueuedTracks();
 
-    if (! this.$refs["track-controller"].isInitialized)
+    if (!this.$refs["track-controller"].isInitialized)
       await this.$refs["track-controller"].initControllers();
     if (this.currentTrack !== null)
       this.$refs["track-controller"].loadTrack(this.currentTrack);
@@ -144,8 +153,7 @@ export default {
     })();
   },*/
 
-  methods: {
-  },
+  methods: {},
 }
 </script>
 
@@ -255,6 +263,7 @@ body {
       margin: 0;
       margin-bottom: 1rem;
     }
+
     .queued-track {
       margin: 1rem 0;
     }
@@ -263,6 +272,7 @@ body {
   .left-part, .right-part {
     margin: 0 2rem;
   }
+
   .left-part {
     flex-grow: 1;
   }
