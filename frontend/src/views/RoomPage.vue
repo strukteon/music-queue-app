@@ -7,8 +7,8 @@
       </div>
 
 
-      <track-controller v-show="/*trackHasLoaded*/ false" ref="track-controller" @next="Room.Tracks.next()"/>
-      <blank-track-controller v-if="true"/>
+      <track-controller v-show="/*trackHasLoaded*/ ! currentTrackIsLoading" ref="track-controller" @next="Room.Tracks.next()"/>
+      <blank-track-controller v-if="currentTrackIsLoading"/>
 
       <div class="party-members-section">
         <p class="title">Party Members
@@ -43,7 +43,7 @@
           <template v-if="queuedTracks == null">
             <blank-queued-track v-for="i in 4" :key="i"/>
           </template>
-          <template v-else-if="/*queuedTracksHaveLoaded*/ queuedTracks.length > 0">
+          <template v-else-if="queuedTracks.length > 0">
             <queued-track v-for="(track, i) in queuedTracks" :key="track.trackId + i" :track="track"/>
           </template>
           <p v-else>No tracks queued!</p>
@@ -95,13 +95,13 @@ export default {
     roomMembers: null,
     TrackManager,
     currentTrack: null,
+    currentTrackIsLoading: true,
     queuedTracks: null,
     websocketHandler: null,
     showQrCode: true,
   }),
   async beforeCreate() {
     BackendController.loadUniqueId();
-    console.log(BackendController.uniqueId)
 
     let room = await Room.getCurrent();
     if (!room) alert("Error: not in room");
@@ -118,7 +118,8 @@ export default {
     if (!this.$refs["track-controller"].isInitialized)
       await this.$refs["track-controller"].initControllers();
     if (this.currentTrack !== null)
-      this.$refs["track-controller"].loadTrack(this.currentTrack);
+      await this.$refs["track-controller"].loadTrack(this.currentTrack);
+    this.currentTrackIsLoading = false;
 
     console.log(MemberManager.members)
     await MemberManager.loadAllMembers();
