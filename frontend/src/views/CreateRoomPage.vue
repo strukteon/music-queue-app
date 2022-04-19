@@ -26,6 +26,7 @@
 import {Room} from "@/scripts/models/Room";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
 import SettingsModal from "../components/create-room/SettingsModal";
+import {User} from "@/scripts/models/Users";
 
 export default {
   name: "CreateRoomPage",
@@ -35,6 +36,12 @@ export default {
     username: "",
     roomName: ""
   }),
+  async mounted() {
+    let self = await User.getSelf();
+    if (self !== null) {
+      this.$router.push({ name: "RoomPage" });
+    }
+  },
   methods: {
     async createRoom() {
       let res = await Room.create(this.roomName, this.username);

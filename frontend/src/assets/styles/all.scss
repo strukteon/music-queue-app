@@ -1,0 +1,10 @@
+a[data-styled] {
+  text-decoration: none;
+  color: unset;
+  border-bottom: 3px rgba(#fff, .3) solid;
+  transition: all .2s ease;
+}
+a[data-styled]:hover {
+  color: #ddd;
+  border-bottom: 3px rgba(#fff, .2) solid;
+}

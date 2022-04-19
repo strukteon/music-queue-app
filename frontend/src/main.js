@@ -15,6 +15,7 @@ if (localStorage.getItem("uniqueId") == null) {
 }
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import "@/assets/styles/all.scss";
 
 createApp(App)
     .use(router)

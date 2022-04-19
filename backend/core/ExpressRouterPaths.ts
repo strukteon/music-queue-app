@@ -7,6 +7,10 @@ import {Track} from "./Track";
 export function setup(router: Router, roomManager: RoomManager) {
     roomPaths(router, roomManager);
     userPaths(router, roomManager);
+
+    const showUnsupportedOpMessage = (req, res) => res.json(generateMessage(false, "Unsupported operation"));
+    router.get("*", showUnsupportedOpMessage);
+    router.post("*", showUnsupportedOpMessage);
 }
 
 function roomPaths(router: Router, roomManager: RoomManager) {

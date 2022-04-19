@@ -101,7 +101,7 @@
       <font-awesome-icon :icon="faHandHoldingHeart" class="icon"/>
       <div class="text-wrapper">
         <h3 class="title">Do you like this app?</h3>
-        <p class="text">Leave a tip over at my ko-fi page</p>
+        <p class="text">Leave a tip over at my <a href="https://ko-fi.com/strukteon" data-styled>ko-fi page</a></p>
       </div>
     </section>
   </div>

@@ -24,6 +24,7 @@
 <script>
 import {Room} from "@/scripts/models/Room";
 import { faQrcode } from "@fortawesome/free-solid-svg-icons";
+import {User} from "@/scripts/models/Users";
 
 export default {
   name: "JoinRoom",
@@ -32,6 +33,12 @@ export default {
     username: "",
     joinCode: ""
   }),
+  async mounted() {
+    let self = await User.getSelf();
+    if (self !== null) {
+      this.$router.push({ name: "RoomPage" });
+    }
+  },
   methods: {
     async joinRoom() {
       console.log(await Room.join(this.joinCode.toUpperCase(), this.username));
