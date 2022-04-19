@@ -14,20 +14,24 @@
         <p class="artist">{{ track?.artist || "enjoy musiq!" }}</p>
       </div>
       <div class="button-section">
-        <div class="buttons">
-          <button :class="{ mute: true, active: isMuted }" @click="toggleMute"><font-awesome-icon :icon="fa.faVolumeMute"/></button>
-          <button :class="{play: true, 'is-playing': isPlaying }" @click="toggleStart"><font-awesome-icon :icon="isPlaying ? fa.faPause : fa.faPlay"/></button>
-          <button class="next" @click="$emit('next')"><font-awesome-icon :icon="fa.faStepForward"/></button>
-        </div>
-        <p v-if="track != null" class="track-submitter"><font-awesome-icon :icon="fa.faUser"/> {{ requesterName }}</p>
+        <template v-if="track != null">
+          <div class="buttons">
+            <button :class="{ mute: true, active: isMuted }" @click="toggleMute"><font-awesome-icon :icon="fa.faVolumeMute"/></button>
+            <button :class="{play: true, 'is-playing': isPlaying }" @click="toggleStart"><font-awesome-icon :icon="isPlaying ? fa.faPause : fa.faPlay"/></button>
+            <button class="next" @click="$emit('next')"><font-awesome-icon :icon="fa.faStepForward"/></button>
+          </div>
+          <p class="track-submitter"><font-awesome-icon :icon="fa.faUser"/> {{ requesterName }}</p>
+        </template>
+        <vue-button v-else @click="$emit('next')">Start next track</vue-button>
       </div>
-      <div class="progress-section">
-        <div v-if="track != null" class="progress-text">
+
+      <div class="progress-section" v-if="track !== null">
+        <div class="progress-text">
           <p>{{ positionMinutes }}:{{ positionSeconds }}</p>
           <p class="divider">/</p>
           <p>{{ durationMinutes }}:{{ durationSeconds }}</p>
         </div>
-        <div v-if="track != null" class="progress-bar">
+        <div class="progress-bar">
           <input type="range" v-model="progress"
                  ref="progressBar"
                  @change="seek" @input="updateCSSVar"
@@ -53,9 +57,11 @@ import { faSoundcloud, faYoutube } from "@fortawesome/free-brands-svg-icons";
 
 import {MemberManager} from "@/scripts/room/MemberManager";
 import { deviceIsMobile } from "@/scripts/Tools";
+import VueButton from "@/components/VueButton";
 
 export default {
   name: "TrackController",
+  components: {VueButton},
   data: () => ({
     fa: {
       faVolumeMute,
@@ -121,7 +127,7 @@ export default {
       this.activeController.setOnTrackProgress((position, duration) => {
         this.track.position = position;
         this.track.duration = duration;
-        if (!this.pauseProgressUpdate)
+        if (!this.pauseProgressUpdate && position >= 0 && duration > 0)
           this.progress = Math.floor(position / duration * 1000);
       });
 
@@ -250,7 +256,7 @@ export default {
       .track-img.thumbnail-yt {
         height: 134%;
       }
-      
+
       .platform-icon {
         position: absolute;
         left: 0;

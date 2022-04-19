@@ -38,6 +38,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import "~@/assets/styles/skeleton.scss";
+
 .queued-track.blank {
   .img-blank {
     background-color: lightgrey;
@@ -63,29 +65,6 @@ export default {
     border-radius: 6px;
     height: 38px;
     width: 38px;
-  }
-
-  .animate-bg {
-    background-image: linear-gradient(
-            90deg,
-            rgba(#fff, 0) 0,
-            rgba(#fff, 0.2) 20%,
-            rgba(#fff, 0.5) 60%,
-            rgba(#fff, 0)
-    );
-    background-size: 400% 400%;
-    animation: skeleton-loader-bg linear;
-    animation-duration: 8s;
-    animation-iteration-count: infinite;
-
-    @keyframes skeleton-loader-bg {
-      100% {
-        background-position: 0 0;
-      }
-      0% {
-        background-position: 400% 400%;
-      }
-    }
   }
 }
 </style>
