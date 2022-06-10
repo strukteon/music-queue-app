@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "tsc && node dist/main.js",
+    "watch": "nodemon --watch src -e ts --exec \"npm run start\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -21,6 +22,7 @@
     "ws": "^7.5.1"
   },
   "devDependencies": {
-    "@types/node": "^14.18.9"
+    "@types/node": "^14.18.9",
+    "nodemon": "^2.0.16"
   }
 }

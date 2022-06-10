@@ -18,7 +18,7 @@ let router = Router();
 setup(router, roomManager);
 app.use("/api", router);
 
-app.use(express.static("../frontend/dist"))
+app.use(express.static("../frontend/dist"));
 
 app.use('*', (req, res) => {
     fs.readFile("../frontend/dist/index.html", 'utf-8', function(err, page) {
